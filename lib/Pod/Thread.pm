@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.8 2002-09-16 00:09:20 eagle Exp $
+# $Id: Thread.pm,v 0.9 2002-09-16 00:50:27 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.08;
+$VERSION = 0.09;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -191,14 +191,15 @@ sub interior_sequence {
 }
 
 # Called for each paragraph that's actually part of the POD.  We take
-# advantage of this opportunity to untabify the input and double any
-# pre-existing backslashes in the input.  Also pick up the Id string if we
-# find it.
+# advantage of this opportunity to untabify the input, double any pre-existing
+# backslashes in the input, and escape any square brackets.  Also pick up the
+# Id string if we find it.
 sub preprocess_paragraph {
     my $self = shift;
     local $_ = shift;
     1 while s/^(.*?)(\t+)/$1 . ' ' x (length ($2) * 8 - length ($1) % 8)/me;
     s/\\/\\\\/g;
+    s/([\[\]])/'\\entity[' . ord ($1) . ']'/eg;
     $$self{id} = $1 if (/(\$Id\:.*\$)/) && !$$self{id};
     $_;
 }
