@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.4 2002-06-28 20:10:45 eagle Exp $
+# $Id: Thread.pm,v 0.5 2002-06-29 22:13:59 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,126 +29,23 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 ##############################################################################
 # Table of supported E<> escapes
 ##############################################################################
 
-# This table is taken near verbatim from Pod::PlainText in Pod::Parser, which
-# got it near verbatim from the original Pod::Text.  It is therefore credited
-# to Tom Christiansen, and I'm glad I didn't have to write it.  :)  "iexcl" to
-# "divide" added by Tim Jenness.
+# Include only the escapes that are basic ASCII or are not valid XHTML
+# escapes.
 %ESCAPES = (
     'amp'       =>    '&',      # ampersand
     'apos'      =>    "'",      # apostrophe
     'lt'        =>    '<',      # left chevron, less-than
     'gt'        =>    '>',      # right chevron, greater-than
     'quot'      =>    '"',      # double quote
+    "shy"       =>    '',       # soft (discretionary) hyphen
     'sol'       =>    '/',      # solidus (forward slash)
     'verbar'    =>    '|',      # vertical bar
-
-    "Aacute"    =>    "\xC1",   # capital A, acute accent
-    "aacute"    =>    "\xE1",   # small a, acute accent
-    "Acirc"     =>    "\xC2",   # capital A, circumflex accent
-    "acirc"     =>    "\xE2",   # small a, circumflex accent
-    "AElig"     =>    "\xC6",   # capital AE diphthong (ligature)
-    "aelig"     =>    "\xE6",   # small ae diphthong (ligature)
-    "Agrave"    =>    "\xC0",   # capital A, grave accent
-    "agrave"    =>    "\xE0",   # small a, grave accent
-    "Aring"     =>    "\xC5",   # capital A, ring
-    "aring"     =>    "\xE5",   # small a, ring
-    "Atilde"    =>    "\xC3",   # capital A, tilde
-    "atilde"    =>    "\xE3",   # small a, tilde
-    "Auml"      =>    "\xC4",   # capital A, dieresis or umlaut mark
-    "auml"      =>    "\xE4",   # small a, dieresis or umlaut mark
-    "Ccedil"    =>    "\xC7",   # capital C, cedilla
-    "ccedil"    =>    "\xE7",   # small c, cedilla
-    "Eacute"    =>    "\xC9",   # capital E, acute accent
-    "eacute"    =>    "\xE9",   # small e, acute accent
-    "Ecirc"     =>    "\xCA",   # capital E, circumflex accent
-    "ecirc"     =>    "\xEA",   # small e, circumflex accent
-    "Egrave"    =>    "\xC8",   # capital E, grave accent
-    "egrave"    =>    "\xE8",   # small e, grave accent
-    "ETH"       =>    "\xD0",   # capital Eth, Icelandic
-    "eth"       =>    "\xF0",   # small eth, Icelandic
-    "Euml"      =>    "\xCB",   # capital E, dieresis or umlaut mark
-    "euml"      =>    "\xEB",   # small e, dieresis or umlaut mark
-    "Iacute"    =>    "\xCD",   # capital I, acute accent
-    "iacute"    =>    "\xED",   # small i, acute accent
-    "Icirc"     =>    "\xCE",   # capital I, circumflex accent
-    "icirc"     =>    "\xEE",   # small i, circumflex accent
-    "Igrave"    =>    "\xCC",   # capital I, grave accent
-    "igrave"    =>    "\xEC",   # small i, grave accent
-    "Iuml"      =>    "\xCF",   # capital I, dieresis or umlaut mark
-    "iuml"      =>    "\xEF",   # small i, dieresis or umlaut mark
-    "Ntilde"    =>    "\xD1",   # capital N, tilde
-    "ntilde"    =>    "\xF1",   # small n, tilde
-    "Oacute"    =>    "\xD3",   # capital O, acute accent
-    "oacute"    =>    "\xF3",   # small o, acute accent
-    "Ocirc"     =>    "\xD4",   # capital O, circumflex accent
-    "ocirc"     =>    "\xF4",   # small o, circumflex accent
-    "Ograve"    =>    "\xD2",   # capital O, grave accent
-    "ograve"    =>    "\xF2",   # small o, grave accent
-    "Oslash"    =>    "\xD8",   # capital O, slash
-    "oslash"    =>    "\xF8",   # small o, slash
-    "Otilde"    =>    "\xD5",   # capital O, tilde
-    "otilde"    =>    "\xF5",   # small o, tilde
-    "Ouml"      =>    "\xD6",   # capital O, dieresis or umlaut mark
-    "ouml"      =>    "\xF6",   # small o, dieresis or umlaut mark
-    "szlig"     =>    "\xDF",   # small sharp s, German (sz ligature)
-    "THORN"     =>    "\xDE",   # capital THORN, Icelandic
-    "thorn"     =>    "\xFE",   # small thorn, Icelandic
-    "Uacute"    =>    "\xDA",   # capital U, acute accent
-    "uacute"    =>    "\xFA",   # small u, acute accent
-    "Ucirc"     =>    "\xDB",   # capital U, circumflex accent
-    "ucirc"     =>    "\xFB",   # small u, circumflex accent
-    "Ugrave"    =>    "\xD9",   # capital U, grave accent
-    "ugrave"    =>    "\xF9",   # small u, grave accent
-    "Uuml"      =>    "\xDC",   # capital U, dieresis or umlaut mark
-    "uuml"      =>    "\xFC",   # small u, dieresis or umlaut mark
-    "Yacute"    =>    "\xDD",   # capital Y, acute accent
-    "yacute"    =>    "\xFD",   # small y, acute accent
-    "yuml"      =>    "\xFF",   # small y, dieresis or umlaut mark
-
-    "laquo"     =>    "\xAB",   # left pointing double angle quotation mark
-    "lchevron"  =>    "\xAB",   #  synonym (backwards compatibility)
-    "raquo"     =>    "\xBB",   # right pointing double angle quotation mark
-    "rchevron"  =>    "\xBB",   #  synonym (backwards compatibility)
-
-    "iexcl"     =>    "\xA1",   # inverted exclamation mark
-    "cent"      =>    "\xA2",   # cent sign
-    "pound"     =>    "\xA3",   # (UK) pound sign
-    "curren"    =>    "\xA4",   # currency sign
-    "yen"       =>    "\xA5",   # yen sign
-    "brvbar"    =>    "\xA6",   # broken vertical bar
-    "sect"      =>    "\xA7",   # section sign
-    "uml"       =>    "\xA8",   # diaresis
-    "copy"      =>    "\xA9",   # Copyright symbol
-    "ordf"      =>    "\xAA",   # feminine ordinal indicator
-    "not"       =>    "\xAC",   # not sign
-    "shy"       =>    '',       # soft (discretionary) hyphen
-    "reg"       =>    "\xAE",   # registered trademark
-    "macr"      =>    "\xAF",   # macron, overline
-    "deg"       =>    "\xB0",   # degree sign
-    "plusmn"    =>    "\xB1",   # plus-minus sign
-    "sup2"      =>    "\xB2",   # superscript 2
-    "sup3"      =>    "\xB3",   # superscript 3
-    "acute"     =>    "\xB4",   # acute accent
-    "micro"     =>    "\xB5",   # micro sign
-    "para"      =>    "\xB6",   # pilcrow sign = paragraph sign
-    "middot"    =>    "\xB7",   # middle dot = Georgian comma
-    "cedil"     =>    "\xB8",   # cedilla
-    "sup1"      =>    "\xB9",   # superscript 1
-    "ordm"      =>    "\xBA",   # masculine ordinal indicator
-    "frac14"    =>    "\xBC",   # vulgar fraction one quarter
-    "frac12"    =>    "\xBD",   # vulgar fraction one half
-    "frac34"    =>    "\xBE",   # vulgar fraction three quarters
-    "iquest"    =>    "\xBF",   # inverted question mark
-    "times"     =>    "\xD7",   # multiplication sign
-    "divide"    =>    "\xF7",   # division sign
-
-    "nbsp"      =>    ' ',      # non-breaking space
 );
 
 ##############################################################################
@@ -252,16 +149,11 @@ sub interior_sequence {
     # Index entries are ignored in plain text.
     return '' if ($command eq 'X' || $command eq 'Z');
 
-    # Expand escapes into the actual character now, warning if invalid.
+    # Expand escapes into the actual character now, returning the thread
+    # \entity command if it's not one of the ones we map directly.
     if ($command eq 'E') {
-        if (/^\d+$/) {
-            return chr;
-        } else {
-            return $ESCAPES{$_} if defined $ESCAPES{$_};
-            my ($file, $line) = $seq->file_line;
-            warn "$file:$line: Unknown escape: E<$_>\n";
-            return "E<$_>";
-        }
+        return $ESCAPES{$_} if defined $ESCAPES{$_};
+        return "\\entity[$_]";
     }
 
     # For all the other formatting codes, empty content produces no output.
@@ -612,11 +504,6 @@ and the input file it was given could not be opened.
 (W) The POD source contained a non-standard command paragraph (something of
 the form C<=command args>) that Pod::Man didn't know about.  It was ignored.
 
-=item %s:%d: Unknown escape: %s
-
-(W) The POD source contained an C<EE<lt>E<gt>> escape that Pod::Text didn't
-know about.
-
 =item %s:%d: Unknown formatting code: %s
 
 (W) The POD source contained a non-standard formatting code (something of
@@ -632,6 +519,10 @@ C<=over> command.
 =head1 SEE ALSO
 
 L<Pod::Parser>, L<spin(1)>
+
+Current versions of this program are available from my web tools page at
+L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
+same page.
 
 =head1 AUTHOR
 
