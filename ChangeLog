@@ -1,3 +1,17 @@
+2002-09-15  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.07 released.
+
+	* lib/Pod/Thread.pm (cmd_item): Only consider an =item tag to be a
+	bullet when it's literally *, allowing *Z<> to mark an =item tag
+	that's a literal asterisk.
+
+	* lib/Pod/Thread.pm (textblock): Use \class instead of \p.
+	(navbar): Likewise.
+	(contents): Use \number instead of \packnumber.
+
+	* scripts/pod2thread.PL: Use Pod::Usage for pod2usage.
+
 2002-09-11  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.06 released.
