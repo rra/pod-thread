@@ -1,5 +1,10 @@
 2002-09-15  Russ Allbery  <rra@stanford.edu>
 
+	* VERSION: Pod::Thread 0.09 released.
+
+	* lib/Pod/Thread.pm (preprocess_paragraph): Also escape square
+	brackets using \entity.
+
 	* VERSION: Pod::Thread 0.08 released.
 
 	* lib/Pod/Thread.pm (seq_f): Tag with the class "file" for easier
