@@ -1,5 +1,15 @@
 2002-09-15  Russ Allbery  <rra@stanford.edu>
 
+	* VERSION: Pod::Thread 0.08 released.
+
+	* lib/Pod/Thread.pm (seq_f): Tag with the class "file" for easier
+	style sheet work.
+
+	* lib/Pod/Thread.pm (cmd_over): Clear PENDING to allow for nested
+	description lists.
+	(cmd_back): Re-establish PENDING here if we were inside a nested
+	list.
+
 	* VERSION: Pod::Thread 0.07 released.
 
 	* lib/Pod/Thread.pm (cmd_item): Only consider an =item tag to be a
