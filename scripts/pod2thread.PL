@@ -36,7 +36,7 @@ $Config{startperl}
 print OUT <<'!NO!SUBS!';
 
 # pod2thread -- Convert POD data to the HTML macro language thread.
-# $Id: pod2thread.PL,v 1.2 2002-06-29 22:13:43 eagle Exp $
+# $Id: pod2thread.PL,v 1.3 2002-09-11 21:53:48 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -55,6 +55,27 @@ use strict;
 # Silence -w warnings.
 use vars qw($running_under_some_shell);
 
+# Scan the input file and find all of the top-level headings, building a hash
+# table of them and associating them with tags suitable for tags.  Returns the
+# the CVS Id string if found and the hash table.
+sub find_headings {
+    my ($file, $navbar) = @_;
+    open (FILE, $file) or die "Can't open $file: $!\n";
+    local $_;
+    my (@headings, $id);
+    while (<FILE>) {
+        if (s/^=head1\s+//) {
+            s/\s+$//;
+            next if ($_ eq 'NAME' && $navbar);
+            push (@headings, $_);
+        }
+        $id = $1 if /(\$Id\:.*\$)/;
+    }
+    close FILE;
+    my $section = 1;
+    return $id, map { $_ => ('S' . $section++) } @headings;
+}
+
 # Insert -- into @ARGV before any single dash argument to hide it from
 # Getopt::Long; we want to interpret it as meaning stdin (which Pod::Parser
 # does correctly).
@@ -65,8 +86,17 @@ my $stdin;
 # default to sentence boundaries turned off for compatibility.
 my %options;
 Getopt::Long::config ('bundling');
-GetOptions (\%options, 'help|h', 'style|s=s') or exit 1;
+GetOptions (\%options, 'contents|c', 'help|h', 'navbar|n', 'style|s=s',
+            'title|t=s') or exit 1;
 pod2usage (1) if $options{help};
+
+# If navigation was requested, grab the appropriate hash table.
+if ($options{contents} || $options{navbar}) {
+    my ($id, %headings) = find_headings ($ARGV[0], $options{navbar});
+    $options{id} = $id if $id;
+    $options{contents} = \%headings if $options{contents};
+    $options{navbar} = \%headings if $options{navbar};
+}
 
 # Initialize and run the formatter.
 my $parser = Pod::Thread->new (%options);
@@ -96,6 +126,16 @@ the output is written to STDOUT.
 
 =over 4
 
+=item B<-c>, B<--contents>
+
+Generate a table of contents as the first section of the resulting thread
+file, with links to each top-level heading.
+
+=item B<-n>, B<--navbar>
+
+Generate a navigation bar at the top of the resulting thread file, with
+links to each top-level heading.
+
 =item B<-h>, B<--help>
 
 Print out usage information and exit.
@@ -106,6 +146,11 @@ In the generated thread source, include a reference to the style sheet
 I<style>.  If this option is not given, no style sheet reference will be
 included.
 
+=item B<-t> I<title>, B<--title>=I<title>
+
+Use I<title> as the title of the page rather than looking for a NAME section
+in the POD document.
+
 =back
 
 =head1 DIAGNOSTICS
@@ -115,6 +160,11 @@ for information about what those errors might mean.  Internally, it can also
 produce the following diagnostic:
 
 =over 4
+
+=item Can't open %s: %s
+
+(F) The specified file, given on the command line as the POD source, could
+not be opened.
 
 =item Unknown option: %s
 
