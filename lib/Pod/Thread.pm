@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.6 2002-09-11 21:54:01 eagle Exp $
+# $Id: Thread.pm,v 0.7 2002-09-15 20:59:33 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.06;
+$VERSION = 0.07;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -136,7 +136,7 @@ sub textblock {
         my ($name, $description) = ($1, $2);
         $self->output ("\\id[$$self{id}]\n\n") if $$self{id};
         $self->output ("\\heading[$name][$$self{style}]\n\n");
-        $self->output ("\\h1[$name]\n\n\\p(subhead)[($description)]\n\n");
+        $self->output ("\\h1[$name]\n\n\\class(subhead)[($description)]\n\n");
         $self->navbar if $$self{navbar};
         $self->contents if $$self{contents};
     } else {
@@ -288,8 +288,9 @@ sub cmd_item {
     local $_ = shift;
     s/\s+$//;
     $_ ||= '*';
+    my $isbullet = ($_ eq '*');
     $_ = $self->interpolate ($_);
-    if ($_ eq '*') {
+    if ($isbullet) {
         $$self{ITEMS}[0] = '\\bullet';
     } elsif (/^(\d+)[.\)]?\s*$/) {
         $$self{ITEMS}[0] = '\\number';
@@ -375,7 +376,7 @@ sub contents {
             map { [ $_, substr ($$self{contents}{$_}, 1) ] }
                 keys %{ $$self{contents} };
     for (@sections) {
-        $self->output ("\\packnumber[\\link[#S$$_[1]][$$_[0]]]\n");
+        $self->output ("\\number(packed)[\\link[#S$$_[1]][$$_[0]]]\n");
     }
     $self->output ("\n");
 }
@@ -387,7 +388,7 @@ sub navbar {
         sort { $$a[1] <=> $$b[1] }
             map { [ $_, substr ($$self{navbar}{$_}, 1) ] }
                 keys %{ $$self{navbar} };
-    $self->output ("\\p(navbar)[\n  ");
+    $self->output ("\\class(navbar)[\n  ");
     my $length = 0;
     my $output = '';
     for (@sections) {
