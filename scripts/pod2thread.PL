@@ -36,7 +36,7 @@ $Config{startperl}
 print OUT <<'!NO!SUBS!';
 
 # pod2thread -- Convert POD data to the HTML macro language thread.
-# $Id: pod2thread.PL,v 1.1 2002-06-28 02:21:28 eagle Exp $
+# $Id: pod2thread.PL,v 1.2 2002-06-29 22:13:43 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -128,6 +128,10 @@ command-line options.
 =head1 SEE ALSO
 
 L<Pod::Thread>, L<Pod::Parser>, spin(1)
+
+Current versions of this program are available from my web tools page at
+L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
+same page.
 
 =head1 AUTHOR
 
