@@ -41,6 +41,3 @@ INSTALLATION
   You'll probably need to do the "make install" as root.  This will also
   install a driver scripts named pod2thread; see its man page for more
   information.
-
-                                                Russ Allbery
-                                                rra@stanford.edu
