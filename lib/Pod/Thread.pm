@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.3 2002-06-28 20:05:44 eagle Exp $
+# $Id: Thread.pm,v 0.4 2002-06-28 20:10:45 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.03;
+$VERSION = 0.04;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -507,7 +507,9 @@ sub reformat {
     my $output = '';
     my $width = 74;
     while (length > $width) {
-        if (s/^([^\n]{0,$width})\s+// || s/^([^\n]{$width})//) {
+        if (s/^([^\n]{0,$width})\s+//) {
+            $output .= $1 . "\n";
+        } elsif (s/^([^\n]{$width}\S+)\s*//) {
             $output .= $1 . "\n";
         } else {
             last;
