@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.5 2002-06-29 22:13:59 eagle Exp $
+# $Id: Thread.pm,v 0.6 2002-09-11 21:54:01 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.05;
+$VERSION = 0.06;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -64,6 +64,20 @@ sub initialize {
 # Core overrides
 ##############################################################################
 
+# Handle the beginning of a POD file.  We only do something if title is set,
+# in which case we output the title and other header information at the
+# beginning of the resulting output file.
+sub begin_pod {
+    my $self = shift;
+    if ($$self{title}) {
+        $self->output ("\\id[$$self{id}]\n\n") if $$self{id};
+        $self->output ("\\heading[$$self{title}][$$self{style}]\n\n");
+        $self->output ("\\h1[$$self{title}]\n\n");
+        $self->navbar if $$self{navbar};
+        $self->contents if $$self{contents};
+    }
+}
+
 # Called for each command paragraph.  Gets the command, the associated
 # paragraph, the line number, and a Pod::Paragraph object.  Just dispatches
 # the command to a method named the same as the command.  =cut is handled
@@ -96,7 +110,7 @@ sub verbatim {
     local $_ = shift;
     return if /^\s*$/;
     s/^(\s*\S+)/$1/gme;
-    s/(\n+)$/\]$1/;
+    s/\s+$/\]\n\n/;
     if ($$self{ITEMS} && @{ $$self{ITEMS} } > 0) {
         $self->item ("\\pre\n[" . $_);
     } else {
@@ -118,11 +132,13 @@ sub textblock {
     s/\s+$/\n/;
     if ($$self{ITEMS} && @{ $$self{ITEMS} } > 0) {
         $self->item ($self->reformat ($_));
-    } elsif ($$self{IN_NAME} && /(\S+) - (.*)/) {
+    } elsif ($$self{IN_NAME} && /(\S+(?:,\s*\S+)*) - (.*)/) {
         my ($name, $description) = ($1, $2);
-        $self->output ("\\id[$$self{ID}]\n\n");
+        $self->output ("\\id[$$self{id}]\n\n") if $$self{id};
         $self->output ("\\heading[$name][$$self{style}]\n\n");
         $self->output ("\\h1[$name]\n\n\\p(subhead)[($description)]\n\n");
+        $self->navbar if $$self{navbar};
+        $self->contents if $$self{contents};
     } else {
         $self->output ($self->reformat ($_ . "\n"));
     }
@@ -183,7 +199,7 @@ sub preprocess_paragraph {
     local $_ = shift;
     1 while s/^(.*?)(\t+)/$1 . ' ' x (length ($2) * 8 - length ($1) % 8)/me;
     s/\\/\\\\/g;
-    $$self{ID} = $1 if (/(\$Id\:.*\$)/);
+    $$self{id} = $1 if (/(\$Id\:.*\$)/) && !$$self{id};
     $_;
 }
 
@@ -203,10 +219,15 @@ sub end_pod {
 sub cmd_head1 {
     my ($self, $text, $line) = @_;
     $text =~ s/\s+$//;
-    if ($text eq 'NAME') {
+    if ($text eq 'NAME' && !exists $$self{title}) {
         $$self{IN_NAME} = 1;
     } else {
-        $self->heading ($text, 2, $line);
+        my $sections = $$self{contents} || $$self{navbar};
+        if ($sections && $$sections{$text}) {
+            $self->heading ($text, 2, $line, '#' . $$sections{$text});
+        } else {
+            $self->heading ($text, 2, $line);
+        }
     }
 }
 
@@ -325,10 +346,19 @@ sub seq_i { return "\\italic[$_[1]]" }
 # Pod::ParseLink.
 sub seq_l {
     my ($self, $link, $seq) = @_;
-    my ($text, $type) = (parselink ($link))[1,4];
+    my ($text, $name, $section, $type) = (parselink ($link))[1..4];
     my ($file, $line) = $seq->file_line;
     $text = $self->interpolate ($text, $line);
-    $text = '<\\link[' . $text . '][' . $text . ']>' if $type eq 'url';
+    if ($type eq 'url') {
+        $text = '<\\link[' . $text . '][' . $text . ']>';
+    } elsif ($type eq 'pod' && !$name && $section) {
+        my $sections = $$self{contents} || $$self{navbar};
+        if ($$sections{$section}) {
+            $text =~ s/^\"//;
+            $text =~ s/\"$//;
+            $text = "\\link[#$$sections{$section}][$text]";
+        }
+    }
     return $text || '';
 }
 
@@ -336,11 +366,53 @@ sub seq_l {
 # Header handling
 ##############################################################################
 
+# Output a table of contents at the beginning of a document.
+sub contents {
+    my $self = shift;
+    $self->output ("\\h2[Table of Contents]\n\n");
+    my @sections =
+        sort { $$a[1] <=> $$b[1] }
+            map { [ $_, substr ($$self{contents}{$_}, 1) ] }
+                keys %{ $$self{contents} };
+    for (@sections) {
+        $self->output ("\\packnumber[\\link[#S$$_[1]][$$_[0]]]\n");
+    }
+    $self->output ("\n");
+}
+
+# Output a navigation bar at the beginning of a document.
+sub navbar {
+    my $self = shift;
+    my @sections =
+        sort { $$a[1] <=> $$b[1] }
+            map { [ $_, substr ($$self{navbar}{$_}, 1) ] }
+                keys %{ $$self{navbar} };
+    $self->output ("\\p(navbar)[\n  ");
+    my $length = 0;
+    my $output = '';
+    for (@sections) {
+        if ($length > 52) {
+            $self->output ("$output\\break\n  ");
+            $output = '';
+            $length = 0;
+        }
+        if ($length != 0) {
+            $output .= '  | ';
+            $length += 3;
+        }
+        my $section = join (' ', map { ucfirst (lc $_) } split (' ', $$_[0]));
+        $section =~ s/\bAnd\b/and/g;
+        $output .= "\\link[#S$$_[1]][$section]\n";
+        $length += length $$_[0];
+    }
+    $self->output ($output) if $output;
+    $self->output ("]\n\n");
+}
+
 # The common code for handling all headers.  Takes the interpolated header
-# text, the line number, the indentation, and the surrounding marker for the
-# alt formatting method.
+# text, the level of the heading, the indentation, and the optional id tag.
 sub heading {
-    my ($self, $text, $level, $line) = @_;
+    my ($self, $text, $level, $line, $tag) = @_;
     if ($$self{WAITING}) { $self->item }
     if ($$self{PENDING}) {
         $self->output ("]\n");
@@ -348,7 +420,11 @@ sub heading {
     }
     $text =~ s/\s+$//;
     $text = $self->interpolate ($text, $line);
-    $self->output ("\\h$level\[" . $text . "]\n\n");
+    if ($tag) {
+        $self->output ("\\h$level($tag)[" . $text . "]\n\n");
+    } else {
+        $self->output ("\\h$level\[" . $text . "]\n\n");
+    }
 }
 
 ##############################################################################
@@ -476,10 +552,34 @@ argument.
 
 =over 4
 
+=item contents
+
+Asks for a table of contents section at the beginning of the document.
+Should be set to a hash table mapping section headers to section numbers
+prefixed by S (for internal links).
+
+=item id
+
+Sets the CVS Id string for the file.  If this isn't set, Pod::Thread will
+try to find it in the file, but will only successfully find it if it occurs
+before the beginning of any POD in the input file.
+
+=item navbar
+
+Asks for a navigation bar at the beginning of the document.  Should be set
+to a hash table mapping section headers to section numbers prefixed by S
+(for internal links).
+
 =item style
 
 Sets the name of the style sheet to use.  If not given, no reference to a
 style sheet will be included in the generated page.
+
+=item title
+
+The title of the document.  If this is set, it will be used rather than
+looking for and parsing a NAME section in the POD file, and NAME sections
+will no longer be required or special.
 
 =back
 
