@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.7 2002-09-15 20:59:33 eagle Exp $
+# $Id: Thread.pm,v 0.8 2002-09-16 00:09:20 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.07;
+$VERSION = 0.08;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -253,12 +253,9 @@ sub cmd_head4 {
 sub cmd_over {
     my $self = shift;
     local $_ = shift;
-    if ($$self{PENDING}) {
-        $self->output ("]\n");
-        $$self{PENDING} = 0;
-    }
     $$self{LEVEL}++;
     $$self{ITEMS} ||= [];
+    $$self{PENDING} = 0;
     unshift (@{ $$self{ITEMS} }, '');
 }
 
@@ -278,6 +275,7 @@ sub cmd_back {
         $$self{LEVEL} = 0;
     } else {
         shift @{ $$self{ITEMS} };
+        $$self{PENDING} = 1 if ($$self{LEVEL} > 0);
     }
 }
 
@@ -339,7 +337,7 @@ sub cmd_for {
 # and do more complicated things.
 sub seq_c { return "\\code[$_[1]]" }
 sub seq_b { return "\\bold[$_[1]]" }
-sub seq_f { return "\\italic[$_[1]]" }
+sub seq_f { return "\\italic(file)[$_[1]]" }
 sub seq_i { return "\\italic[$_[1]]" }
 
 # Handle links.  Don't try to actually generate hyperlinks for anything other
@@ -532,9 +530,9 @@ Pod::Thread is a module that can convert documentation in the POD format
 language.  It lets the converter from thread to HTML handle some of the
 annoying parts of conversion to HTML.
 
-As a derived class from Pod::Parser, Pod::Text supports the same methods and
-interfaces.  See L<Pod::Parser> for all the details; briefly, one creates a
-new parser with C<< Pod::Text->new() >> and then calls either
+As a derived class from Pod::Parser, Pod::Thread supports the same methods
+and interfaces.  See L<Pod::Parser> for all the details; briefly, one
+creates a new parser with C<< Pod::Thread->new() >> and then calls either
 parse_from_filehandle() or parse_from_file().
 
 new() can take options, in the form of key/value pairs that control the
@@ -593,12 +591,7 @@ will no longer be required or special.
 =item Item called without tag
 
 (W) Something has gone wrong in internal C<=item> processing.  These
-messages indicate a bug in Pod::Text; you should never see them.
-
-=item Can't open %s for reading: %s
-
-(F) Pod::Text was invoked via the compatibility mode pod2text() interface
-and the input file it was given could not be opened.
+messages indicate a bug in Pod::Thread; you should never see them.
 
 =item %s:%d: Unknown command paragraph: %s
 
@@ -608,11 +601,11 @@ the form C<=command args>) that Pod::Man didn't know about.  It was ignored.
 =item %s:%d: Unknown formatting code: %s
 
 (W) The POD source contained a non-standard formatting code (something of
-the form C<XE<lt>E<gt>>) that Pod::Text didn't know about.
+the form C<XE<lt>E<gt>>) that Pod::Thread didn't know about.
 
 =item %s:%d: Unmatched =back
 
-(W) Pod::Text encountered a C<=back> command that didn't correspond to an
+(W) Pod::Thread encountered a C<=back> command that didn't correspond to an
 C<=over> command.
 
 =back
