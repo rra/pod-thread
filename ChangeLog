@@ -1,0 +1,8 @@
+2002-06-27  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.1 released.
+
+	* lib/Pod/Thread.pm: New file.
+	* scripts/pod2thread.PL: New file.
+	* Makefile.PL: New file.
+

@@ -1,0 +1,6 @@
+MANIFEST
+Makefile.PL
+README
+VERSION
+lib/Pod/Thread.pm
+scripts/pod2thread.PL

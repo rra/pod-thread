@@ -1,0 +1,46 @@
+                         Pod::Thread version 0.1
+         (Format POD source into thread, an HTML macro language)
+
+  Copyright 2002 Russ Allbery <rra@stanford.edu>.  This program is free
+  software; you may redistribute it and/or modify it under the same terms
+  as Perl itself.
+
+  I welcome all bug reports and patches for this package.  However, please
+  be aware that I tend to be extremely busy and to get a lot of mail.
+  I'll save your mail and get to it as soon as I can, but depending on how
+  busy I am it may take me a couple of months.
+
+
+INTRODUCTION
+
+  This package contains a module to translate POD into thread, an HTML
+  macro language.  As such, it's not very useful without spin, a separate
+  program to convert thread into HTML.  spin is available from:
+
+      <ftp://ftp.eyrie.org/pub/software/web/>
+
+  the same directory in which the most recent version of this module will
+  be found.  I wrote this module for my personal needs and it may not be
+  (and in fact probably isn't) suitable for more general use as yet.
+
+  The eventual intention is to turn the core portions of spin into a
+  second Perl module and add it to this package, which will make this a
+  more generally useful package for HTML page generation.  I have no
+  estimate as to when I'll get around to doing that.
+
+
+INSTALLATION
+
+  Follow the standard installation procedure for Perl modules, which is to
+  type the following commands:
+
+      perl Makefile.PL
+      make
+      make install
+
+  You'll probably need to do the "make install" as root.  This will also
+  install a driver scripts named pod2thread; see its man page for more
+  information.
+
+                                                Russ Allbery
+                                                rra@stanford.edu
