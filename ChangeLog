@@ -1,3 +1,32 @@
+2002-09-11  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.06 released.
+
+	* lib/Pod/Thread.pm (begin_pod): New function.  If title was set,
+	output the header and title information right away.
+	(verbatim): Make sure that verbatim blocks end with two newlines.
+	(textblock): For NAME sections, use the id variable if set and
+	output the navigation bar or table of contents if requested.
+	Handle multiple comma-separated page names before the dash in the
+	one-line description.
+	(preprocess_paragraph): Search for CVS Id strings only if the id
+	variable isn't already set.
+	(cmd_head1): Only treat NAME as special if title isn't set, and if
+	contents or navbar are set, add target attributes to the top-level
+	headings.
+	(seq_l): If contents or navbar are set and the link is to an
+	internal section that matches one of our top-level headings, make
+	it a real link now that we can.
+	(contents): New function.
+	(navbar): New function.
+	(heading): Handle target attributes.
+
+	* scripts/pod2thread.PL: Add support for -c and -n to set contents
+	and navbar variables for Pod::Thread accordingly.  If we have to
+	scan the POD file, also look for CVS Id tags and set the id
+	variable for Pod::Thread.  Support the -t flag.
+	(find_headings): New function, called to find top level headings.
+
 2002-06-29  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.05 released.  Make the package version
