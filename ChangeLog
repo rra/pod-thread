@@ -1,9 +1,16 @@
 2002-06-28  Russ Allbery  <rra@stanford.edu>
 
+	* VERSION: Pod::Thread 0.03 released.
+
+	* lib/Pod/Thread.pm (preprocess_paragraph): Munge the Id tag in
+	the source so that CVS doesn't get too smart.
+	(reformat): Don't forcibly break long lines.  It causes bogus
+	spaces in the XHTML output of spin.
+
 	* VERSION: Pod::Thread 0.02 released.
 
-	* lib/Pod/Thread.pm: Be more conservative about what we recognize
-	as an Id tag in the input.
+	* lib/Pod/Thread.pm (preprocess_paragraph): Be more conservative
+	about what we recognize as an Id tag in the input.
 
 2002-06-27  Russ Allbery  <rra@stanford.edu>
 
