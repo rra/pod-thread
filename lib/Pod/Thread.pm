@@ -1,5 +1,5 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.1 2002-06-28 02:21:28 eagle Exp $
+# $Id: Thread.pm,v 0.2 2002-06-28 19:58:30 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -291,7 +291,7 @@ sub preprocess_paragraph {
     local $_ = shift;
     1 while s/^(.*?)(\t+)/$1 . ' ' x (length ($2) * 8 - length ($1) % 8)/me;
     s/\\/\\\\/g;
-    $$self{ID} = $1 if (/(\$Id.*\$)/);
+    $$self{ID} = $1 if (/(\$Id: Thread.pm,v 0.2 2002-06-28 19:58:30 eagle Exp $)/);
     $_;
 }
 
