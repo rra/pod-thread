@@ -1,3 +1,17 @@
+2002-06-29  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.05 released.  Make the package version
+	number match the module version.
+
+	* scripts/pod2thread.PL: Add a reference to the package web page
+	to the documentation.
+
+	* lib/Pod/Thread.pm: Strip the entities table down to just
+	mappings for entities that don't exist in HTML 4.0.  Add a
+	reference to the web page to the documentation.
+	(interior_sequence): Pass all entities not found in the stripped
+	table along to spin as \entity commands.
+
 2002-06-28  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.03 released.
