@@ -1,7 +1,7 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.9 2002-09-16 00:50:27 eagle Exp $
+# $Id: Thread.pm,v 0.10 2008-04-16 06:05:41 eagle Exp $
 #
-# Copyright 2002 by Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -29,7 +29,7 @@ use vars qw(@ISA %ESCAPES $VERSION);
 
 # Don't use the CVS revision as the version, but the version should match the
 # CVS revision.
-$VERSION = 0.09;
+$VERSION = 0.10;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -223,6 +223,7 @@ sub cmd_head1 {
     if ($text eq 'NAME' && !exists $$self{title}) {
         $$self{IN_NAME} = 1;
     } else {
+        $$self{IN_NAME} = 0;
         my $sections = $$self{contents} || $$self{navbar};
         if ($sections && $$sections{$text}) {
             $self->heading ($text, 2, $line, '#' . $$sections{$text});
@@ -375,7 +376,8 @@ sub contents {
             map { [ $_, substr ($$self{contents}{$_}, 1) ] }
                 keys %{ $$self{contents} };
     for (@sections) {
-        $self->output ("\\number(packed)[\\link[#S$$_[1]][$$_[0]]]\n");
+        my $heading = $self->interpolate ($$_[0]);
+        $self->output ("\\number(packed)[\\link[#S$$_[1]][$heading]]\n");
     }
     $self->output ("\n");
 }
@@ -400,7 +402,8 @@ sub navbar {
             $output .= '  | ';
             $length += 3;
         }
-        my $section = join (' ', map { ucfirst (lc $_) } split (' ', $$_[0]));
+        my $section = $self->interpolate ($$_[0]);
+        $section = join (' ', map { ucfirst (lc $_) } split (' ', $section));
         $section =~ s/\bAnd\b/and/g;
         $output .= "\\link[#S$$_[1]][$section]\n";
         $length += length $$_[0];
