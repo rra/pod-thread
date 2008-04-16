@@ -1,5 +1,7 @@
 2008-04-15  Russ Allbery  <rra@stanford.edu>
 
+	* VERSION: Pod::Thread 0.10 released.
+
 	* lib/Pod/Thread.pm (cmd_head1): Clear IN_NAME at the first =head1
 	that isn't NAME rather than leaving it set for the whole document.
 	(contents): Interpolate each heading before adding it to the
