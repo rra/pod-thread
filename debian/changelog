@@ -1,5 +1,6 @@
 libpod-thread-perl (0.11-2) UNRELEASED; urgency=low
 
+  * Install the upstream README file.
   * Add a Bugs control field.
 
  -- Russ Allbery <rra@debian.org>  Wed, 12 Nov 2008 20:20:47 -0800
