@@ -1,7 +1,7 @@
 ChangeLog
-MANIFEST
-Makefile.PL
-README
-VERSION
 lib/Pod/Thread.pm
+Makefile.PL
+MANIFEST
+README
 scripts/pod2thread.PL
+VERSION
