@@ -36,7 +36,6 @@ $Config{startperl}
 print OUT <<'!NO!SUBS!';
 
 # pod2thread -- Convert POD data to the HTML macro language thread.
-# $Id: pod2thread.PL,v 1.4 2002-09-15 20:59:10 eagle Exp $
 #
 # Copyright 2002 by Russ Allbery <rra@stanford.edu>
 #

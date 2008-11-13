@@ -1,3 +1,10 @@
+2008-11-12  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.11 released.
+
+	* lib/Pod/Thread.pm: Minor coding style updates: require Perl
+	5.006 and use "our" instead of "use vars".
+
 2008-04-15  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.10 released.
