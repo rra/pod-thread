@@ -1,5 +1,7 @@
-                         Pod::Thread version 0.10
+                         Pod::Thread version 0.11
          (Format POD source into thread, an HTML macro language)
+
+              Maintained by Russ Allbery <rra@stanford.edu>
 
   Copyright 2002, 2008 Russ Allbery <rra@stanford.edu>.  This program is
   free software; you may redistribute it and/or modify it under the same
@@ -10,13 +12,21 @@
   I'll save your mail and get to it as soon as I can, but depending on how
   busy I am it may take me a couple of months.
 
+BLURB
+
+  Pod::Thread translates POD source into thread, a macro language
+  processed by spin.  It supports optionally adding a table of contents
+  and a navigation bar to the genenerated file.  This package also
+  includes the pod2thread driver script, invoked automatically by spin for
+  POD files and pointers to POD files.
+
 DESCRIPTION
 
   This package contains a module to translate POD into thread, an HTML
   macro language.  As such, it's not very useful without spin, a separate
   program to convert thread into HTML.  spin is available from:
 
-      <http://www.eyrie.org/~eagle/software/web/>
+      http://www.eyrie.org/~eagle/software/web/
 
   and the most recent version of this module will be found on the same
   page.  I wrote this module for my personal needs and it may not be (and
@@ -26,6 +36,17 @@ DESCRIPTION
   second Perl module and add it to this package, which will make this a
   more generally useful package for HTML page generation.  I have no
   estimate as to when I'll get around to doing that.
+
+  The conversion done by this module is mostly straightforward.  The only
+  notable parts are a search through the full processed file for a CVS or
+  Subversion Id string to pass on to the thread source and the optional
+  generation of a table of contents or a navigation bar at the top of the
+  generated file.
+
+REQUIREMENTS
+
+  As mentioned above, Pod::Thread is not particularly useful without
+  spin.  It also requires Perl 5.006 or later.
 
 INSTALLATION
 
@@ -39,3 +60,23 @@ INSTALLATION
   You'll probably need to do the "make install" as root.  This will also
   install a driver scripts named pod2thread; see its man page for more
   information.
+
+HOMEPAGE AND SOURCE REPOSITORY
+
+  My web tools web page at:
+
+      http://www.eyrie.org/~eagle/software/web/
+
+  will always have the current version of this package, the current
+  documentation, and pointers to any additional resources.
+
+  Pod::Thread is maintained using Git.  You can access the current source
+  by cloning the repository at:
+
+      git://git.eyrie.org/web/pod-thread.git
+
+  or view the repository on the web at:
+
+      http://git.eyrie.org/?p=web/pod-thread.git
+
+  Debian packaging is kept on the debian branch of the Git repository.

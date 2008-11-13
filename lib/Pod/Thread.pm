@@ -1,5 +1,4 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
-# $Id: Thread.pm,v 0.10 2008-04-16 06:05:41 eagle Exp $
 #
 # Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>
 #
@@ -16,20 +15,16 @@
 
 package Pod::Thread;
 
-require 5.004;
+require 5.006;
+use strict;
 
 use Carp qw(carp croak);
 use Pod::ParseLink qw(parselink);
 use Pod::Parser ();
 
-use strict;
-use vars qw(@ISA %ESCAPES $VERSION);
+our @ISA = qw(Pod::Parser);
 
-@ISA = qw(Pod::Parser);
-
-# Don't use the CVS revision as the version, but the version should match the
-# CVS revision.
-$VERSION = 0.10;
+our $VERSION = 0.11;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -37,7 +32,7 @@ $VERSION = 0.10;
 
 # Include only the escapes that are basic ASCII or are not valid XHTML
 # escapes.
-%ESCAPES = (
+our %ESCAPES = (
     'amp'       =>    '&',      # ampersand
     'apos'      =>    "'",      # apostrophe
     'lt'        =>    '<',      # left chevron, less-than
@@ -628,7 +623,7 @@ Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>.
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.

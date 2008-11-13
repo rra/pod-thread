@@ -1,0 +1,15 @@
+--- #YAML:1.0
+name:                Pod-Thread
+version:             0.11
+abstract:            Convert POD data to the HTML macro language thread
+license:             ~
+author:              
+    - Russ Allbery (rra@stanford.edu)
+generated_by:        ExtUtils::MakeMaker version 6.42
+distribution_type:   module
+requires:     
+    File::Spec:                    0.8
+    Pod::Parser:                   1.13
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3
