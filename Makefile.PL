@@ -1,5 +1,4 @@
 # Makefile.PL for Pod::Thread
-# $Id: Makefile.PL,v 1.1 2002-06-28 02:21:25 eagle Exp $
 
 BEGIN {
     require 5.004;
