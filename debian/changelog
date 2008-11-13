@@ -1,4 +1,4 @@
-libpod-thread-perl (0.11-1) UNRELEASED; urgency=low
+libpod-thread-perl (0.11-1) unstable; urgency=low
 
   * New upstream version.
   * Update debhelper compatibility level to V7.
@@ -7,7 +7,7 @@ libpod-thread-perl (0.11-1) UNRELEASED; urgency=low
   * Rewrite debian/copyright in the new proposed format.
   * Update standards version to 3.8.0 (no changes required).
 
- -- Russ Allbery <rra@debian.org>  Wed, 12 Nov 2008 19:51:46 -0800
+ -- Russ Allbery <rra@debian.org>  Wed, 12 Nov 2008 20:04:08 -0800
 
 libpod-thread-perl (0.10-1) unstable; urgency=low
 
