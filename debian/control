@@ -6,6 +6,8 @@ Build-Depends-Indep: perl
 Maintainer: Russ Allbery <rra@debian.org>
 Standards-Version: 3.7.3
 Homepage: http://www.eyrie.org/~eagle/software/web/
+Vcs-Git: git://git.eyrie.org/web/pod-thread.git
+Vcs-Browser: http://git.eyrie.org/?p=web/pod-thread.git
 
 Package: libpod-thread-perl
 Architecture: all
