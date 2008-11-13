@@ -15,18 +15,16 @@
 
 package Pod::Thread;
 
-require 5.004;
+require 5.006;
+use strict;
 
 use Carp qw(carp croak);
 use Pod::ParseLink qw(parselink);
 use Pod::Parser ();
 
-use strict;
-use vars qw(@ISA %ESCAPES $VERSION);
+our @ISA = qw(Pod::Parser);
 
-@ISA = qw(Pod::Parser);
-
-$VERSION = 0.10;
+our $VERSION = 0.11;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -34,7 +32,7 @@ $VERSION = 0.10;
 
 # Include only the escapes that are basic ASCII or are not valid XHTML
 # escapes.
-%ESCAPES = (
+our %ESCAPES = (
     'amp'       =>    '&',      # ampersand
     'apos'      =>    "'",      # apostrophe
     'lt'        =>    '<',      # left chevron, less-than
