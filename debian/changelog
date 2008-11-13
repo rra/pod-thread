@@ -1,6 +1,0 @@
-libpod-thread-perl (0.10-1) unstable; urgency=low
-
-  * Initial Debian packaging.
-
- -- Russ Allbery <rra@debian.org>  Tue, 15 Apr 2008 23:59:11 -0700
-
