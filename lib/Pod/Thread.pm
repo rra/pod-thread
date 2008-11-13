@@ -623,7 +623,7 @@ Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>.
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.
