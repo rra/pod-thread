@@ -1,4 +1,3 @@
-\bCVS\b
 ^MANIFEST\.
 ^Makefile$
 ^Pod-Thread-.*\.tar\.gz$
