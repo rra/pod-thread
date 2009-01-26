@@ -1,12 +1,12 @@
 Format-Specification:
- http://wiki.debian.org/Proposals/CopyrightFormat?action=recall&rev=233
+ http://wiki.debian.org/Proposals/CopyrightFormat?action=recall&rev=428
 Upstream-Name: Pod-Thread
 Upstream-Maintainer: Russ Allbery <rra@stanford.edu>
 Upstream-Source: http://www.eyrie.org/~eagle/software/web/
 
 Files: *
-Copyright: 2006, 2008 Russ Allbery <rra@stanford.edu>
-License: GPL-1+ | Artistic
+Copyright: 2006, 2008, 2009 Russ Allbery <rra@stanford.edu>
+License: GPL-1+ | Artistic-1
  This code may be redistributed under the same terms as Perl itself.
  .
  Perl is distributed under either the Artistic License or the GPL.  The
