@@ -1,6 +1,6 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
 #
-# Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2008, 2009 by Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -24,7 +24,7 @@ use Pod::Parser ();
 
 our @ISA = qw(Pod::Parser);
 
-our $VERSION = 0.11;
+our $VERSION = 0.12;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -278,19 +278,20 @@ sub cmd_back {
 
 # An individual list item.
 sub cmd_item {
-    my $self = shift;
-    if ($$self{WAITING}) { $self->item }
-    local $_ = shift;
-    s/\s+$//;
-    $_ ||= '*';
-    my $isbullet = ($_ eq '*');
-    $_ = $self->interpolate ($_);
+    my ($self, $item) = @_;
+    if ($$self{WAITING}) {
+        $self->item;
+    }
+    $item =~ s/\s+$//;
+    $item = '*' unless (defined $item and length ($item) > 0);
+    my $isbullet = ($item eq '*');
+    $item = $self->interpolate ($item);
     if ($isbullet) {
         $$self{ITEMS}[0] = '\\bullet';
-    } elsif (/^(\d+)[.\)]?\s*$/) {
+    } elsif ($item =~ /^(\d+)[.\)]?\s*$/ and $1 ne '0') {
         $$self{ITEMS}[0] = '\\number';
     } else {
-        $$self{ITEMS}[0] = '\\desc[' . $_ . ']';
+        $$self{ITEMS}[0] = "\\desc[$item]";
     }
     $$self{WAITING} = 1;
 }
@@ -491,7 +492,7 @@ sub output {
     my ($self, $text) = @_;
     if ($$self{SPACE}) {
         print { $self->output_handle } "]\n" if ($text =~ s/^\]\s*\n//);
-        print $$self{SPACE};
+        print { $self->output_handle } $$self{SPACE};
         undef $$self{SPACE};
     }
     if ($text =~ s/\n(\n*)$/\n/) {
@@ -623,7 +624,7 @@ Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002, 2008 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2008, 2009 by Russ Allbery <rra@stanford.edu>.
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.

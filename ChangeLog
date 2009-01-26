@@ -1,3 +1,15 @@
+2009-01-25  Russ Allbery  <rra@stanford.edu>
+
+	* VERSION: Pod::Thread 0.12 released.
+
+	* lib/Pod/Thread.pm (output): Print saved whitespace to the thread
+	output as intended instead of to standard output.
+
+	* lib/Pod/Thread.pm (cmd_item): Don't treat =item 0 as a bullet.
+	Also improve the coding style.
+	* t/basic.t: New file.  Add test suite framework and test the
+	=item 0 fix.
+
 2008-11-12  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.11 released.

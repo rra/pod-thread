@@ -4,5 +4,6 @@ Makefile.PL
 MANIFEST
 README
 scripts/pod2thread.PL
+t/basic.t
 VERSION
 META.yml                                 Module meta-data (added by MakeMaker)

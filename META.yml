@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Pod-Thread
-version:             0.11
+version:             0.12
 abstract:            Convert POD data to the HTML macro language thread
 license:             ~
 author:              
