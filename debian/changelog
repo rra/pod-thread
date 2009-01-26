@@ -3,6 +3,7 @@ libpod-thread-perl (0.12-1) unstable; urgency=low
   * New upstream version.
     - Convert =item 0 to \desc[0], not \bullet.
     - Print saved whitespace to the thread output, not stdout.
+  * Add ${misc:Depends} to dependencies.
   * Update the debian/copyright format version and clarify that the
     Artistic license reference is to version 1.
 
