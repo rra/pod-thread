@@ -24,7 +24,7 @@ use Pod::Parser ();
 
 our @ISA = qw(Pod::Parser);
 
-our $VERSION = 0.11;
+our $VERSION = 0.12;
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -288,7 +288,7 @@ sub cmd_item {
     $item = $self->interpolate ($item);
     if ($isbullet) {
         $$self{ITEMS}[0] = '\\bullet';
-    } elsif ($item =~ /^(\d+)[.\)]?\s*$/) {
+    } elsif ($item =~ /^(\d+)[.\)]?\s*$/ and $1 ne '0') {
         $$self{ITEMS}[0] = '\\number';
     } else {
         $$self{ITEMS}[0] = "\\desc[$item]";
@@ -492,7 +492,7 @@ sub output {
     my ($self, $text) = @_;
     if ($$self{SPACE}) {
         print { $self->output_handle } "]\n" if ($text =~ s/^\]\s*\n//);
-        print $$self{SPACE};
+        print { $self->output_handle } $$self{SPACE};
         undef $$self{SPACE};
     }
     if ($text =~ s/\n(\n*)$/\n/) {
