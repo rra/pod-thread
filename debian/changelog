@@ -1,3 +1,11 @@
+libpod-thread-perl (0.12-1) unstable; urgency=low
+
+  * New upstream version.
+    - Convert =item 0 to \desc[0], not \bullet.
+    - Print saved whitespace to the thread output, not stdout.
+
+ -- Russ Allbery <rra@debian.org>  Sun, 25 Jan 2009 16:36:59 -0800
+
 libpod-thread-perl (0.11-2) unstable; urgency=low
 
   * Install the upstream README file.
