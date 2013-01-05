@@ -1,5 +1,8 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* t/minimum-version.t: New test for the minimum required version
+	of Perl.
+
 	* lib/Pod/Thread.pm (handle_code): Fix the regex match that tries
 	to find CVS Id strings.
 	(start_document): Avoid warnings from PerlIO layer detection when
