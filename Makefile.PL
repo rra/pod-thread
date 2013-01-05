@@ -26,16 +26,29 @@ sub script {
     return wantarray ? @scripts : join q{ }, @scripts;
 }
 
+# Determine the path to the set-version script used to update module versions.
+my $set_version = File::Spec->catfile(File::Spec->curdir(), 'set-version');
+
+# Ouptut the Makefile.
 WriteMakefile(
     NAME         => 'Pod::Thread',
     DISTNAME     => 'Pod-Thread',
     ABSTRACT     => 'Convert POD data to the HTML macro language thread',
     AUTHOR       => 'Russ Allbery <rra@stanford.edu>',
     VERSION_FROM => 'VERSION',
-    EXE_FILES    => [script('pod2thread')],
-    PREREQ_PM    => {
-        'File::Spec'  => 0.8,
+
+    # Prerequisites and requirements.
+    MIN_PERL_VERSION => 5.008,
+    PREREQ_PM        => {
         'Pod::Simple' => 3.06,
         'Readonly'    => 0,
     },
+
+    # What to install.
+    EXE_FILES => [script('pod2thread')],
+    PM_FILTER => "perl $set_version",
+
+    # ExtUtils::MakeMaker only understands this with Perl 5.10 or later.
+    ## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
+    ($] >= 5.010 ? (LICENSE => 'perl') : ()),
 );

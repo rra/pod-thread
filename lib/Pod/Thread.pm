@@ -25,7 +25,7 @@ use Carp qw(croak);
 use Readonly;
 use Text::Wrap qw(wrap);
 
-our $VERSION = '0.13';
+our $VERSION = '0.0';
 
 ##############################################################################
 # Internal constants

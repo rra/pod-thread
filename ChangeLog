@@ -1,5 +1,16 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* Makefile.PL: Declare the required version of Perl.  Remove
+	File::Spec dependency that's satisfied by that Perl version.
+	Declare the package license.
+
+	* set-version: New script to substitute the distribution version
+	into the modules that make up the distribution.
+	* Makefile.PL: Use set-version as a filter when building modules
+	for installation.
+	* lib/Pod/Thread.pm: Replace version with 0.0, since it will be
+	replaced by set-version.
+
 	* scripts/pod2thread: Add all supported command-line options to
 	SYNOPSIS and standardize the formatting.
 
