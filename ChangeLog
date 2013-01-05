@@ -1,5 +1,8 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* scripts/pod2thread: Add all supported command-line options to
+	SYNOPSIS and standardize the formatting.
+
 	* t/synopsis.t: New test for the syntax of SYNOPSIS code.
 
 	* t/minimum-version.t: New test for the minimum required version

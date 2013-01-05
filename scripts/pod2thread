@@ -91,7 +91,7 @@ $parser->parse_from_file(@ARGV);
 __END__
 
 =for stopwords
-STDIN STDOUT -hn --navbar subclasses
+STDIN STDOUT -chn --navbar subclasses
 
 =head1 NAME
 
@@ -99,7 +99,8 @@ pod2thread - Convert POD data to the HTML macro language thread.
 
 =head1 SYNOPSIS
 
-pod2thread [B<-hn>] [B<-s> I<style>] [B<-t> I<title>] [I<input> [I<output>]]
+B<pod2thread> [B<-chn>] [B<-s> I<style>] [B<-t> I<title>]
+    [I<input> [I<output>]]
 
 =head1 DESCRIPTION
 
