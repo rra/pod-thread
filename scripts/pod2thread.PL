@@ -37,7 +37,7 @@ print OUT <<'!NO!SUBS!';
 
 # pod2thread -- Convert POD data to the HTML macro language thread.
 #
-# Copyright 2002 by Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2013 by Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -104,13 +104,16 @@ $parser->parse_from_file (@ARGV);
 
 __END__
 
+=for stopwords
+STDIN STDOUT -hn --navbar subclasses
+
 =head1 NAME
 
 pod2thread - Convert POD data to the HTML macro language thread.
 
 =head1 SYNOPSIS
 
-pod2thread [B<-h>] [B<-s> I<style>] [I<input> [I<output>]]
+pod2thread [B<-hn>] [B<-s> I<style>] [B<-t> I<title>] [I<input> [I<output>]]
 
 =head1 DESCRIPTION
 
@@ -177,7 +180,7 @@ command-line options.
 
 =head1 SEE ALSO
 
-L<Pod::Thread>, L<Pod::Parser>, spin(1)
+L<Pod::Thread>, L<Pod::Parser>, L<spin(1)>
 
 Current versions of this program are available from my web tools page at
 L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
@@ -189,7 +192,7 @@ Russ Allbery <rra@stanford.edu>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2013 Russ Allbery <rra@stanford.edu>.
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.

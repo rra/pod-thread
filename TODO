@@ -12,8 +12,4 @@ Test suite:
  * Add basic tests for at least all of the basic thread commands that the
    module may output.
 
- * Add a test of the syntax of the POD documentation.
-
- * Add a spelling test, only run when maintainer checks are enabled.
-
  * Add tests for the various constructor options.

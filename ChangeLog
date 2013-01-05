@@ -1,5 +1,10 @@
 2013-01-04  Russ Allbery  <rra@stanford.edu>
 
+	* t/pod.t: New test for POD syntax.
+	* t/pod-spelling.t: New test for spelling in POD documentation.
+	* lib/Pod/Thread.pm: Add stopwords.
+	* scripts/pod2thread.PL: Likewise.
+
 	* lib/Pod/Thread.pm (seq_l): Only add angle brackets around a URL
 	if there was no anchor text.
 	* t/basic.t: Test URL rendering with and without anchor text.

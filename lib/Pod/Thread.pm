@@ -510,6 +510,9 @@ sub output {
 1;
 __END__
 
+=for stopwords
+STDIN STDOUT navbar
+
 =head1 NAME
 
 Pod::Thread - Convert POD data to the HTML macro language thread
