@@ -1,9 +1,21 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* Makefile.PL: Remove conditionals on Perl 5.005, since Perl 5.8
+	is now required.  Use angle brackets around my email address.
+	Update coding style and formatting.
+
+	* scripts/pod2thread: Remove the code to generate the #! line and
+	supporting code and instead rely on ExtUtils::MakeMaker to handle
+	that during package build.
+	* scripts/pod2thread.PL: Renamed to pod2thread.
+	* Makefile.PL: Remove PL_FILES and realclean.
+
 	* lib/Pod/Thread.pm: Largely rewritten to use Pod::Simple and to
 	update the coding style.  Now also requires the Readonly module.
 	* t/basic.t: Parsers can no longer be used for more than one
 	document.
+	* Makefile.PL: Add Readonly to prerequisites and replace
+	Pod::Parser with Pod::Simple.
 
 2013-01-04  Russ Allbery  <rra@stanford.edu>
 
