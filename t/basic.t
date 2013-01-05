@@ -7,16 +7,16 @@
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
 
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 use Pod::Thread;
 
-my $parser = Pod::Thread->new;
-ok ($parser, 'Constructor succeeded');
-isa_ok ($parser, 'Pod::Thread');
 my $fragment = 1;
 while (<DATA>) {
     next until $_ eq "###\n";
+    my $parser = Pod::Thread->new;
+    ok ($parser, 'Constructor succeeded');
+    isa_ok ($parser, 'Pod::Thread');
     open (TMP, '> tmp.pod') or die "Cannot create tmp.pod: $!\n";
     while (<DATA>) {
         last if $_ eq "###\n";

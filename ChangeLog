@@ -1,3 +1,10 @@
+2013-01-05  Russ Allbery  <rra@stanford.edu>
+
+	* lib/Pod/Thread.pm: Largely rewritten to use Pod::Simple and to
+	update the coding style.  Now also requires the Readonly module.
+	* t/basic.t: Parsers can no longer be used for more than one
+	document.
+
 2013-01-04  Russ Allbery  <rra@stanford.edu>
 
 	* t/pod.t: New test for POD syntax.
