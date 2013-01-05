@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
 #
-# basic.t -- Basic rendering tests for Pod::Thread.
+# Basic rendering tests for Pod::Thread.
 #
-# Copyright 2009 Russ Allbery <rra@stanford.edu>
+# Copyright 2009, 2013 Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 use Pod::Thread;
 
@@ -65,6 +65,23 @@ Some 0 item.
 \desc[0]
 [Some 0 item.
 ]
+
+\signature
+###
+
+###
+=head1 URLs
+
+URL with L<anchor text|http://example.com/>.
+
+URL without anchor text: L<http://example.com/>.
+###
+\h2[URLs]
+
+URL with \link[http://example.com/][anchor text].
+
+URL without anchor text:
+<\link[http://example.com/][http://example.com/]>.
 
 \signature
 ###

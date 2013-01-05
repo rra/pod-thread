@@ -1,3 +1,9 @@
+2013-01-04  Russ Allbery  <rra@stanford.edu>
+
+	* lib/Pod/Thread.pm (seq_l): Only add angle brackets around a URL
+	if there was no anchor text.
+	* t/basic.t: Test URL rendering with and without anchor text.
+
 2009-01-25  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 0.12 released.

@@ -1,6 +1,6 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
 #
-# Copyright 2002, 2008, 2009 by Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2008, 2009, 2013 by Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -24,7 +24,7 @@ use Pod::Parser ();
 
 our @ISA = qw(Pod::Parser);
 
-our $VERSION = 0.12;
+our $VERSION = '0.13';
 
 ##############################################################################
 # Table of supported E<> escapes
@@ -343,20 +343,22 @@ sub seq_i { return "\\italic[$_[1]]" }
 # Pod::ParseLink.
 sub seq_l {
     my ($self, $link, $seq) = @_;
-    my ($text, $name, $section, $type) = (parselink ($link))[1..4];
+    my ($text, $inferred, $name, $section, $type) = parselink ($link);
     my ($file, $line) = $seq->file_line;
-    $text = $self->interpolate ($text, $line);
-    if ($type eq 'url') {
-        $text = '<\\link[' . $text . '][' . $text . ']>';
+    my $result = $self->interpolate ($inferred, $line);
+    if ($type eq 'url' && defined $text) {
+        $result = '\\link[' . $name . '][' . $result . ']';
+    } elsif ($type eq 'url') {
+        $result = '<\\link[' . $name . '][' . $name . ']>';
     } elsif ($type eq 'pod' && !$name && $section) {
         my $sections = $$self{contents} || $$self{navbar};
         if ($$sections{$section}) {
-            $text =~ s/^\"//;
-            $text =~ s/\"$//;
-            $text = "\\link[#$$sections{$section}][$text]";
+            $result =~ s/^\"//;
+            $result =~ s/\"$//;
+            $result = "\\link[#$$sections{$section}][$text]";
         }
     }
-    return $text || '';
+    return $result || '';
 }
 
 ##############################################################################
@@ -624,7 +626,7 @@ Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002, 2008, 2009 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2008, 2009, 2013 by Russ Allbery <rra@stanford.edu>.
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.
