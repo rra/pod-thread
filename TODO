@@ -1,12 +1,5 @@
                           Pod::Thread To-Do List
 
-General:
-
- * Convert Pod::Thread to use Pod::Simple instead of Pod::Parser.  This
-   will allow fixing the rendering of items that look like numbers but
-   should be treated as a description list (such as the INN actsync man
-   page under -v).
-
 Test suite:
 
  * Add basic tests for at least all of the basic thread commands that the

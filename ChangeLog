@@ -3,10 +3,6 @@
 	* t/minimum-version.t: New test for the minimum required version
 	of Perl.
 
-	* lib/Pod/Thread.pm (handle_code): Fix the regex match that tries
-	to find CVS Id strings.
-	(start_document): Avoid warnings from PerlIO layer detection when
-	the output isn't a file handle.
 	* scripts/pod2thread: Update coding style and formatting.
 	* t/basic.t: Likewise.
 	* t/critic.t: New test of coding style in all Perl code.
@@ -25,6 +21,8 @@
 
 	* lib/Pod/Thread.pm: Largely rewritten to use Pod::Simple and to
 	update the coding style.  Now also requires the Readonly module.
+	This fixes a long-standing bug in formatting an =item that looks
+	numeric but is intended to be text.
 	* t/basic.t: Parsers can no longer be used for more than one
 	document.
 	* Makefile.PL: Add Readonly to prerequisites and replace
