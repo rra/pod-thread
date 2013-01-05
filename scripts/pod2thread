@@ -7,63 +7,86 @@
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
 
-require 5.004;
+use 5.008;
+use strict;
+use warnings;
 
 use Getopt::Long qw(GetOptions);
 use Pod::Thread ();
 use Pod::Usage qw(pod2usage);
 
-use strict;
-
-# Silence -w warnings.
-use vars qw($running_under_some_shell);
-
 # Scan the input file and find all of the top-level headings, building a hash
-# table of them and associating them with tags suitable for tags.  Returns the
-# the CVS Id string if found and the hash table.
+# table of them and associating them with tags suitable for tags.  If scanning
+# for a navbar, ignore a section named NAME.  Returns the the CVS Id string if
+# found and the hash table.
+#
+# Note that this will not work properly with any top-level section headings
+# that contain markup, or with =head1 commands whose contents are on multiple
+# lines.
+#
+# $file   - POD source file to scan
+# $navbar - Flag indicating whether we're scanning for the navbar
+#
+# Returns: A list consisting of the CVS Id (or undef if not found) and a list
+#          (suitable for assigning to a hash) of headings mapped to section
+#          tags suitable for use as HTML anchors
 sub find_headings {
     my ($file, $navbar) = @_;
-    open (FILE, $file) or die "Can't open $file: $!\n";
-    local $_;
+
+    # Parse the POD file looking for =head1 and for any CVS Id strings.
     my (@headings, $id);
-    while (<FILE>) {
-        if (s/^=head1\s+//) {
-            s/\s+$//;
-            next if ($_ eq 'NAME' && $navbar);
-            push (@headings, $_);
+  LINE:
+    open my $pod, '<', $file or die "Can't open $file: $!\n";
+    while (defined(my $line = <$pod>)) {
+        if ($line =~ s{ \A =head1 \s+ }{}xms) {
+            my $heading = $line;
+            $heading =~ s{ \s+ \z }{}xms;
+            next if ($heading eq 'NAME' && $navbar);
+            push @headings, $heading;
         }
-        $id = $1 if /(\$Id\:.*\$)/;
+        if ($line =~ m{ (\$ Id: .* \$) }xms) {
+            $id = $1;
+        }
     }
-    close FILE;
+    close $pod or die "Can't close $file: $!\n";
+
+    # Tag the headings with S<n> starting with <n> == 1.  HTML tags have to
+    # start with a letter.
     my $section = 1;
-    return $id, map { $_ => ('S' . $section++) } @headings;
+    return $id, map { $_ => 'S' . $section++ } @headings;
 }
 
 # Insert -- into @ARGV before any single dash argument to hide it from
-# Getopt::Long; we want to interpret it as meaning stdin (which Pod::Parser
-# does correctly).
+# Getopt::Long; we want to interpret it as meaning stdin.
 my $stdin;
-@ARGV = map { $_ eq '-' && !$stdin++ ? ('--', $_) : $_ } @ARGV;
+local @ARGV = map { $_ eq q{-} && !$stdin++ ? (q{--}, $_) : $_ } @ARGV;
 
-# Parse our options.  Use the same names as Pod::Text for simplicity, and
-# default to sentence boundaries turned off for compatibility.
+# Parse our options.  Use the same names as Pod::Text for simplicity.
+my @options = qw(contents|c help|h navbar|n style|s=s title|t=s);
 my %options;
-Getopt::Long::config ('bundling');
-GetOptions (\%options, 'contents|c', 'help|h', 'navbar|n', 'style|s=s',
-            'title|t=s') or exit 1;
-pod2usage (1) if $options{help};
+Getopt::Long::config('bundling');
+GetOptions(\%options, @options) or exit 1;
+if ($options{help}) {
+    pod2usage(1);
+}
 
 # If navigation was requested, grab the appropriate hash table.
 if ($options{contents} || $options{navbar}) {
-    my ($id, %headings) = find_headings ($ARGV[0], $options{navbar});
-    $options{id} = $id if $id;
-    $options{contents} = \%headings if $options{contents};
-    $options{navbar} = \%headings if $options{navbar};
+    my ($id, %headings) = find_headings($ARGV[0], $options{navbar});
+    if (defined $id) {
+        $options{id} = $id;
+    }
+    if ($options{contents}) {
+        $options{contents} = \%headings;
+    }
+    if ($options{navbar}) {
+        $options{navbar} = \%headings;
+    }
 }
 
 # Initialize and run the formatter.
-my $parser = Pod::Thread->new (%options);
-$parser->parse_from_file (@ARGV);
+my $parser = Pod::Thread->new(%options);
+$parser->parse_from_file(@ARGV);
 
 __END__
 
@@ -127,10 +150,12 @@ produce the following diagnostic:
 
 =over 4
 
+=item Can't close %s: %s
+
 =item Can't open %s: %s
 
 (F) The specified file, given on the command line as the POD source, could
-not be opened.
+not be opened or closed.
 
 =item Unknown option: %s
 

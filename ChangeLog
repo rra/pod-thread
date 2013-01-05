@@ -1,5 +1,15 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* lib/Pod/Thread.pm (handle_code): Fix the regex match that tries
+	to find CVS Id strings.
+	(start_document): Avoid warnings from PerlIO layer detection when
+	the output isn't a file handle.
+	* scripts/pod2thread: Update coding style and formatting.
+	* t/basic.t: Likewise.
+	* t/critic.t: New test of coding style in all Perl code.
+	* t/data/perlcriticrc: Test configuration for perlcritic.
+	* t/data/perltidyrc: Test configuration for perltidy.
+
 	* Makefile.PL: Remove conditionals on Perl 5.005, since Perl 5.8
 	is now required.  Use angle brackets around my email address.
 	Update coding style and formatting.

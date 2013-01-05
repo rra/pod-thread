@@ -70,7 +70,7 @@ Readonly my $WRAP_MARGIN => 75;
 # Returns: undef
 sub handle_code {
     my ($line, $line_number, $self) = @_;
-    if (!$self->{opt_id} && m{ (\$ Id: .* \$) }xms) {
+    if (!$self->{opt_id} && $line =~ m{ (\$ Id: .* \$) }xms) {
         $self->{opt_id} = $1;
     }
     return;
@@ -473,7 +473,7 @@ sub start_document {
     eval {
         my @options = (output => 1, details => 1);
         my $flag = (PerlIO::get_layers($self->{output_fh}, @options))[-1];
-        if ($flag & PerlIO::F_UTF8()) {
+        if (defined($flag) && ($flag & PerlIO::F_UTF8())) {
             $self->{ENCODE} = 0;
         }
     };
