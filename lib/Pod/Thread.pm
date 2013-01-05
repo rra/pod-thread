@@ -46,10 +46,10 @@ Readonly my %ESCAPES => (
 
 # Regex matching a manpage-style entry in the NAME header.  $1 is set to the
 # list of things documented by the man page, and $2 is set to the description.
-Readonly my $NAME_REGEX => qr{ \A ( \S+ (?:,\s*\S+)* ) - (.*)}xms;
+Readonly my $NAME_REGEX => qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
 
 # Maximum length of each line when constructing a navbar.
-Readonly my $NAVBAR_LENGTH => 52;
+Readonly my $NAVBAR_LENGTH => 65;
 
 # Margin at which to wrap thread output.
 Readonly my $WRAP_MARGIN => 75;
@@ -100,6 +100,9 @@ sub new {
 
     # Ensure that contiguous blocks of code are merged together.
     $self->merge_text(1);
+
+    # Preserve whitespace whenever possible to make debugging easier.
+    $self->preserve_whitespace(1);
 
     # Pod::Simple doesn't do anything useful with our arguments, but we want
     # to put them in our object as hash keys and values.  This could cause
@@ -394,7 +397,7 @@ sub output_navbar {
 
         # If this isn't the first thing on a line, add the separator.
         if (length($output) != 0) {
-            $output .= q{ | };
+            $output .= q{  | };
             $length += length q{ | };
         }
 
@@ -425,9 +428,9 @@ sub output_navbar {
 # Returns: undef
 sub output_header {
     my ($self, $title, $subheading) = @_;
-    my $style = $self->{style} || q{};
-    if ($self->{id}) {
-        $self->output("\\id[$self->{id}]\n\n");
+    my $style = $self->{opt_style} || q{};
+    if ($self->{opt_id}) {
+        $self->output("\\id[$self->{opt_id}]\n\n");
     }
     $self->output("\\heading[$title][$style]\n\n");
     $self->output("\\h1[$title]\n\n");
@@ -517,14 +520,14 @@ sub end_document {
 sub item {
     my ($self, $text) = @_;
 
-    # If there wasn't anything waiting, we're in some strange situation where
-    # we thought we saw item text but no =item was open.  Shrug and just
-    # output the text.
+    # If there wasn't anything waiting, we're in the second or subsequent
+    # paragraph of the item text.  Just output it.
     if (!$self->{ITEM_PENDING}) {
         $self->output($text);
+        return;
     }
 
-    # Close any pending =item block.
+    # We're starting a new item.  Close any pending =item block.
     if ($self->{ITEM_OPEN}) {
         $self->output("]\n");
         $self->{ITEM_OPEN} = 0;
@@ -593,13 +596,13 @@ sub cmd_verbatim {
     }
 
     # Ensure the paragraph ends in a bracket and two newlines.
-    $text =~ s{ \s+ \z }{\]\n\n}xms;
+    $text =~ s{ \s* \z }{\]\n\n}xms;
 
     # Pass the text to either item or output.
     if (@{ $self->{ITEMS} } > 0) {
-        $self->item("\\pre\n[" . $text);
+        $self->item("\\pre\n[$text");
     } else {
-        $self->output("\\pre\n[" . $text);
+        $self->output("\\pre\n[$text");
     }
     return;
 }
@@ -722,9 +725,8 @@ sub finish_item {
 # Returns: undef
 sub over_common_start {
     my ($self, $type, $attrs) = @_;
-    $self->{LEVEL}++;
     $self->{ITEM_OPEN} = 0;
-    push @{ $self->{ITEMS} }, "\\$type";
+    push @{ $self->{ITEMS} }, q{};
     return;
 }
 
@@ -741,11 +743,10 @@ sub over_common_end {
     $self->finish_item();
 
     # Pop the item off the stack.
-    $self->{LEVEL}--;
     pop @{ $self->{ITEMS} };
 
     # Set pending based on whether there's still another level of item open.
-    if ($self->{LEVEL} > 0) {
+    if (@{ $self->{ITEMS} } > 0) {
         $self->{ITEM_OPEN} = 1;
     }
     return;
@@ -778,13 +779,19 @@ sub end_over_text   { my ($self) = @_; return $self->over_common_end() }
 #
 # Returns: undef
 sub item_common {
-    my ($self, $attrs, $text) = @_;
+    my ($self, $type, $attrs, $text) = @_;
 
     # If we saw an =item command, any previous item block is finished, so
     # output that now.
     if ($self->{ITEM_PENDING}) {
         $self->item();
     }
+
+    # The top of the stack should now contain our new type of item.
+    $self->{ITEMS}[-1] = "\\$type";
+
+    # We now have an item waiting for output.
+    $self->{ITEM_PENDING} = 1;
 
     # If the type is desc, anything in $text is the description title and
     # needs to be appended to our ITEM.
@@ -795,22 +802,18 @@ sub item_common {
 
     # Otherwise, anything in $text is body text.  Handle that now.
     else {
-        $text =~ s{ \s* \n \s* }{ }xmsg;
-        $text =~ s{ \s+ \z }{\n}xms;
-        $self->item($text);
+        $self->item($self->reformat($text));
     }
 
-    # We now have an item waiting for output.
-    $self->{ITEM_PENDING} = 1;
     return;
 }
 
 # All the various item commands just call item_common.
 ## no critic (Subroutines::RequireArgUnpacking)
-sub cmd_item_block  { my $self = shift; return $self->item_common(@_) }
-sub cmd_item_bullet { my $self = shift; return $self->item_common(@_) }
-sub cmd_item_number { my $self = shift; return $self->item_common(@_) }
-sub cmd_item_text   { my $self = shift; return $self->item_common(@_) }
+sub cmd_item_block  { my $s = shift; return $s->item_common('block',  @_) }
+sub cmd_item_bullet { my $s = shift; return $s->item_common('bullet', @_) }
+sub cmd_item_number { my $s = shift; return $s->item_common('number', @_) }
+sub cmd_item_text   { my $s = shift; return $s->item_common('desc',   @_) }
 ## use critic
 
 ##############################################################################
