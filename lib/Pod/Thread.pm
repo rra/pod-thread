@@ -1,13 +1,13 @@
 # Pod::Thread -- Convert POD data to the HTML macro language thread.
 #
+# This module converts POD to the HTML macro language thread.  It's intended
+# for use with the spin program to include POD documentation in a
+# spin-generated web page complex.
+#
 # Copyright 2002, 2008, 2009, 2013 by Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
-#
-# This module converts POD to the HTML macro language thread.  It's intended
-# for use with the spin program to include POD documentation in a
-# spin-generated web page complex.
 
 ##############################################################################
 # Modules and declarations
