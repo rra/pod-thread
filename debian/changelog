@@ -5,6 +5,9 @@ libpod-thread-perl (1.00-1) UNRELEASED; urgency=low
       looks like a number but is intended to be text.
     - Only add angle brackets around a URL if there were no anchor text.
     - Fix link target for URLs with anchor text.
+  * Merge Build-Depends-Indep and Build-Depends.  The distinction is not
+    significant for packages that only build architecture-independent
+    binary packages.
   * Update to debhelper compatibility level V9.
   * Update Debian source package format to 3.0 (quilt).
 
