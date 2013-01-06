@@ -1,4 +1,4 @@
-libpod-thread-perl (1.00-1) UNRELEASED; urgency=low
+libpod-thread-perl (1.00-1) unstable; urgency=low
 
   * New upstream release.
     - Rewritten to use Pod::Simple, fixing problems with an =item that
@@ -14,7 +14,7 @@ libpod-thread-perl (1.00-1) UNRELEASED; urgency=low
     - Add the Debian packaging branch to Vcs-Git.
   * Rewrite debian/copyright in copyright-format 1.0.
 
- -- Russ Allbery <rra@debian.org>  Sat, 05 Jan 2013 16:53:10 -0800
+ -- Russ Allbery <rra@debian.org>  Sat, 05 Jan 2013 17:19:18 -0800
 
 libpod-thread-perl (0.12-1) unstable; urgency=low
 
