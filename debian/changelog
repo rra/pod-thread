@@ -5,6 +5,7 @@ libpod-thread-perl (1.00-1) UNRELEASED; urgency=low
       looks like a number but is intended to be text.
     - Only add angle brackets around a URL if there were no anchor text.
     - Fix link target for URLs with anchor text.
+  * Update to debhelper compatibility level V9.
   * Update Debian source package format to 3.0 (quilt).
 
  -- Russ Allbery <rra@debian.org>  Sat, 05 Jan 2013 16:53:10 -0800
