@@ -11,7 +11,7 @@ use 5.008;
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 7;
 
 # Test that the module loads.
 BEGIN {
@@ -100,6 +100,34 @@ URL with \link[http://example.com/][anchor text].
 
 URL without anchor text:
 <\link[http://example.com/][http://example.com/]>.
+
+\signature
+###
+
+###
+=head1 Non-numeric =item
+
+=over 2
+
+=item 1Z<>
+
+First item.
+
+=item 2
+
+Second item.
+
+=back
+###
+\h2[Non-numeric =item]
+
+\desc[1]
+[First item.
+]
+
+\desc[2]
+[Second item.
+]
 
 \signature
 ###
