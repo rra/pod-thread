@@ -1,7 +1,9 @@
 Source: libpod-thread-perl
 Section: perl
 Priority: extra
-Build-Depends: debhelper (>= 9), libreadonly-perl, perl
+Build-Depends: debhelper (>= 9), libperl-critic-perl, libreadonly-perl,
+ libtest-minimumversion-perl, libtest-pod-perl, libtest-strict-perl,
+ libtest-synopsis-perl, perl
 Maintainer: Russ Allbery <rra@debian.org>
 Bugs: mailto:rra@debian.org
 Standards-Version: 3.9.4
