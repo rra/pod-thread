@@ -4,9 +4,9 @@ Priority: extra
 Build-Depends: debhelper (>= 9), perl
 Maintainer: Russ Allbery <rra@debian.org>
 Bugs: mailto:rra@debian.org
-Standards-Version: 3.8.0
+Standards-Version: 3.9.4
 Homepage: http://www.eyrie.org/~eagle/software/web/
-Vcs-Git: git://git.eyrie.org/web/pod-thread.git
+Vcs-Git: git://git.eyrie.org/web/pod-thread.git -b debian
 Vcs-Browser: http://git.eyrie.org/?p=web/pod-thread.git
 
 Package: libpod-thread-perl

@@ -10,6 +10,8 @@ libpod-thread-perl (1.00-1) UNRELEASED; urgency=low
     binary packages.
   * Update to debhelper compatibility level V9.
   * Update Debian source package format to 3.0 (quilt).
+  * Update to standards version 3.9.4.
+    - Add the Debian packaging branch to Vcs-Git.
 
  -- Russ Allbery <rra@debian.org>  Sat, 05 Jan 2013 16:53:10 -0800
 
