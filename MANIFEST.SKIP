@@ -2,8 +2,9 @@
 ^Makefile$
 ^Pod-Thread-.*\.tar\.gz$
 ^blib/
-^scripts/pod2thread$
+^cover_db/
 ^pm_to_blib$
+^scripts/pod2thread$
 ~$
 \.old$
 \.bak$

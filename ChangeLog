@@ -1,5 +1,9 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* t/strict.t: New test for strict, warning, and compilation of all
+	Perl code, and for test suite coverage.  The current coverage
+	threshold is set quite low.
+
 	* Makefile.PL: Declare the required version of Perl.  Remove
 	File::Spec dependency that's satisfied by that Perl version.
 	Declare the package license.
