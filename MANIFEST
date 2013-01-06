@@ -1,9 +1,21 @@
 ChangeLog
 lib/Pod/Thread.pm
+LICENSE
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
+MYMETA.yml
 README
-scripts/pod2thread.PL
+scripts/pod2thread
+set-version
 t/basic.t
+t/critic.t
+t/data/perlcriticrc
+t/data/perltidyrc
+t/minimum-version.t
+t/pod-spelling.t
+t/pod.t
+t/strict.t
+t/synopsis.t
+TODO
 VERSION
 META.yml                                 Module meta-data (added by MakeMaker)

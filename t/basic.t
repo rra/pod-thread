@@ -1,45 +1,63 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 #
-# basic.t -- Basic rendering tests for Pod::Thread.
+# Basic rendering tests for Pod::Thread.
 #
-# Copyright 2009 Russ Allbery <rra@stanford.edu>
+# Copyright 2009, 2013 Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
 
-use Test::More tests => 3;
+use 5.008;
+use strict;
+use warnings;
 
-use Pod::Thread;
+use Test::More tests => 7;
 
-my $parser = Pod::Thread->new;
-ok ($parser, 'Constructor succeeded');
-isa_ok ($parser, 'Pod::Thread');
+# Test that the module loads.
+BEGIN {
+    use_ok('Pod::Thread');
+}
+
+# Read a section of a test from DATA, terminated by ###.
+#
+# Returns: The section without the terminating ### as a string
+sub read_test_section {
+    my $data = q{};
+  INPUT:
+    while (defined(my $line = <DATA>)) {
+        last INPUT if $line eq "###\n";
+        $data .= $line;
+    }
+    return $data;
+}
+
+# Read a test fragment from DATA.  Test fragments start with ### and consist
+# of an input and an output section, ending with ###.
+#
+# Returns: A list of the input and output, or an empty list on end of data
+sub read_test {
+    my ($line, $input, $output);
+  DATA:
+    while (defined($line = <DATA>)) {
+        last DATA if $line eq "###\n";
+    }
+    if (!defined $line) {
+        return;
+    }
+    $input  = read_test_section();
+    $output = read_test_section();
+    return ($input, $output);
+}
+
+# Main routine.  Loop while we have input and output.
 my $fragment = 1;
-while (<DATA>) {
-    next until $_ eq "###\n";
-    open (TMP, '> tmp.pod') or die "Cannot create tmp.pod: $!\n";
-    while (<DATA>) {
-        last if $_ eq "###\n";
-        print TMP $_;
-    }
-    close TMP;
-    open (OUT, '> out.tmp') or die "Cannot create out.tmp: $!\n";
-    $parser->parse_from_file ('tmp.pod', \*OUT);
-    close OUT;
-    open (TMP, 'out.tmp') or die "Cannot open out.tmp: $!\n";
-    my $output;
-    {
-        local $/;
-        $output = <TMP>;
-    }
-    close TMP;
-    unlink ('tmp.pod', 'out.tmp');
-    my $expected = '';
-    while (<DATA>) {
-        last if $_ eq "###\n";
-        $expected .= $_;
-    }
-    is ($output, $expected, "Fragment $fragment");
+while (my ($input, $expected) = read_test()) {
+    my $parser = Pod::Thread->new;
+    isa_ok($parser, 'Pod::Thread');
+    my $seen;
+    $parser->output_string(\$seen);
+    $parser->parse_string_document($input);
+    is($seen, $expected, "Fragment $fragment");
     $fragment++;
 }
 
@@ -64,6 +82,51 @@ Some 0 item.
 
 \desc[0]
 [Some 0 item.
+]
+
+\signature
+###
+
+###
+=head1 URLs
+
+URL with L<anchor text|http://example.com/>.
+
+URL without anchor text: L<http://example.com/>.
+###
+\h2[URLs]
+
+URL with \link[http://example.com/][anchor text].
+
+URL without anchor text:
+<\link[http://example.com/][http://example.com/]>.
+
+\signature
+###
+
+###
+=head1 Non-numeric =item
+
+=over 2
+
+=item 1Z<>
+
+First item.
+
+=item 2
+
+Second item.
+
+=back
+###
+\h2[Non-numeric =item]
+
+\desc[1]
+[First item.
+]
+
+\desc[2]
+[Second item.
 ]
 
 \signature
