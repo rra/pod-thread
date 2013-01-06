@@ -1,5 +1,10 @@
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
+	* LICENSE: New file summarizing copyright and license information.
+	* lib/Pod/Thread.pm: Minor copyright notice change to make it
+	easier to parse.
+	* scripts/pod2thread: Likewise.
+
 	* t/strict.t: New test for strict, warning, and compilation of all
 	Perl code, and for test suite coverage.  The current coverage
 	threshold is set quite low.

@@ -4,7 +4,7 @@
 # for use with the spin program to include POD documentation in a
 # spin-generated web page complex.
 #
-# Copyright 2002, 2008, 2009, 2013 by Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2008, 2009, 2013 Russ Allbery <rra@stanford.edu>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -980,7 +980,7 @@ Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text from podlators.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002, 2008, 2009, 2013 by Russ Allbery <rra@stanford.edu>.
+Copyright 2002, 2008, 2009, 2013 Russ Allbery <rra@stanford.edu>
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.
