@@ -1,0 +1,189 @@
+#!perl
+#
+# pod2thread -- Convert POD data to the HTML macro language thread.
+#
+# Copyright 2002, 2013 Russ Allbery <rra@stanford.edu>
+#
+# This program is free software; you may redistribute it and/or modify it
+# under the same terms as Perl itself.
+
+use 5.008;
+use strict;
+use warnings;
+
+use Getopt::Long qw(GetOptions);
+use Pod::Thread ();
+use Pod::Usage qw(pod2usage);
+
+# Scan the input file and find all of the top-level headings, building a hash
+# table of them and associating them with tags suitable for tags.  If scanning
+# for a navbar, ignore a section named NAME.  Returns the the CVS Id string if
+# found and the hash table.
+#
+# Note that this will not work properly with any top-level section headings
+# that contain markup, or with =head1 commands whose contents are on multiple
+# lines.
+#
+# $file   - POD source file to scan
+# $navbar - Flag indicating whether we're scanning for the navbar
+#
+# Returns: A list consisting of the CVS Id (or undef if not found) and a list
+#          (suitable for assigning to a hash) of headings mapped to section
+#          tags suitable for use as HTML anchors
+sub find_headings {
+    my ($file, $navbar) = @_;
+
+    # Parse the POD file looking for =head1 and for any CVS Id strings.
+    my (@headings, $id);
+  LINE:
+    open my $pod, '<', $file or die "Can't open $file: $!\n";
+    while (defined(my $line = <$pod>)) {
+        if ($line =~ s{ \A =head1 \s+ }{}xms) {
+            my $heading = $line;
+            $heading =~ s{ \s+ \z }{}xms;
+            next if ($heading eq 'NAME' && $navbar);
+            push @headings, $heading;
+        }
+        if ($line =~ m{ (\$ Id: .* \$) }xms) {
+            $id = $1;
+        }
+    }
+    close $pod or die "Can't close $file: $!\n";
+
+    # Tag the headings with S<n> starting with <n> == 1.  HTML tags have to
+    # start with a letter.
+    my $section = 1;
+    return $id, map { $_ => 'S' . $section++ } @headings;
+}
+
+# Insert -- into @ARGV before any single dash argument to hide it from
+# Getopt::Long; we want to interpret it as meaning stdin.
+my $stdin;
+local @ARGV = map { $_ eq q{-} && !$stdin++ ? (q{--}, $_) : $_ } @ARGV;
+
+# Parse our options.  Use the same names as Pod::Text for simplicity.
+my @options = qw(contents|c help|h navbar|n style|s=s title|t=s);
+my %options;
+Getopt::Long::config('bundling');
+GetOptions(\%options, @options) or exit 1;
+if ($options{help}) {
+    pod2usage(1);
+}
+
+# If navigation was requested, grab the appropriate hash table.
+if ($options{contents} || $options{navbar}) {
+    my ($id, %headings) = find_headings($ARGV[0], $options{navbar});
+    if (defined $id) {
+        $options{id} = $id;
+    }
+    if ($options{contents}) {
+        $options{contents} = \%headings;
+    }
+    if ($options{navbar}) {
+        $options{navbar} = \%headings;
+    }
+}
+
+# Initialize and run the formatter.
+my $parser = Pod::Thread->new(%options);
+$parser->parse_from_file(@ARGV);
+
+__END__
+
+=for stopwords
+STDIN STDOUT -chn --navbar subclasses
+
+=head1 NAME
+
+pod2thread - Convert POD data to the HTML macro language thread.
+
+=head1 SYNOPSIS
+
+B<pod2thread> [B<-chn>] [B<-s> I<style>] [B<-t> I<title>]
+    [I<input> [I<output>]]
+
+=head1 DESCRIPTION
+
+B<pod2thread> is a front-end for Pod::Thread and its subclasses.  It uses
+that module to generate thread source from POD source.
+
+I<input> is the file to read for POD source (the POD can be embedded in
+code).  If I<input> isn't given, it defaults to STDIN.  I<output>, if given,
+is the file to which to write the thread output.  If I<output> isn't given,
+the output is written to STDOUT.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-c>, B<--contents>
+
+Generate a table of contents as the first section of the resulting thread
+file, with links to each top-level heading.
+
+=item B<-n>, B<--navbar>
+
+Generate a navigation bar at the top of the resulting thread file, with
+links to each top-level heading.
+
+=item B<-h>, B<--help>
+
+Print out usage information and exit.
+
+=item B<-s> I<style>, B<--style>=I<style>
+
+In the generated thread source, include a reference to the style sheet
+I<style>.  If this option is not given, no style sheet reference will be
+included.
+
+=item B<-t> I<title>, B<--title>=I<title>
+
+Use I<title> as the title of the page rather than looking for a NAME section
+in the POD document.
+
+=back
+
+=head1 DIAGNOSTICS
+
+If B<pod2thread> fails with errors, see L<Pod::Thread> and L<Pod::Parser>
+for information about what those errors might mean.  Internally, it can also
+produce the following diagnostic:
+
+=over 4
+
+=item Can't close %s: %s
+
+=item Can't open %s: %s
+
+(F) The specified file, given on the command line as the POD source, could
+not be opened or closed.
+
+=item Unknown option: %s
+
+(F) An unknown command line option was given.
+
+=back
+
+In addition, other L<Getopt::Long> error messages may result from invalid
+command-line options.
+
+=head1 SEE ALSO
+
+L<Pod::Thread>, L<Pod::Parser>, L<spin(1)>
+
+Current versions of this program are available from my web tools page at
+L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
+same page.
+
+=head1 AUTHOR
+
+Russ Allbery <rra@stanford.edu>.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2002, 2013 Russ Allbery <rra@stanford.edu>
+
+This program is free software; you may redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
