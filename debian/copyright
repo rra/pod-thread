@@ -11,6 +11,9 @@ License: Perl
  between the two licenses that Perl is released under:  the GNU GPL and the
  Artistic License.  Please see your Perl distribution for the details and
  copies of the licenses.
+Comment: You can find the GPL version 1 in /usr/share/common-licenses/GPL-1
+ and the Artistic License in /usr/share/common-licenses/Artistic on Debian
+ systems.
 
 Files: t/critic.t t/minimum-version.t t/pod-spelling.t t/pod.t t/strict.t
  t/synopsis.t
@@ -46,3 +49,4 @@ License: Expat
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
  OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
  THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
