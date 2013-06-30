@@ -191,7 +191,7 @@ sub _handle_element_start {
     # If we have a command handler, we need to accumulate the contents of the
     # tag before calling it.  If we have a start handler, call it immediately.
     if ($self->can("cmd_$method")) {
-        push @{ $self->{PENDING} }, [$attrs, q{}];
+        push(@{ $self->{PENDING} }, [$attrs, q{}]);
     } elsif ($self->can("start_$method")) {
         $method = 'start_' . $method;
         $self->$method($attrs, q{});
@@ -227,7 +227,7 @@ sub _handle_element_end {
         return;
     } elsif ($self->can("end_$method")) {
         $method = 'end_' . $method;
-        return $self->$method();
+        return $self->$method;
     }
 }
 
@@ -330,8 +330,8 @@ sub output {
 sub sorted_sections {
     my ($self, $sections) = @_;
     my $by_tag = sub {
-        my $an = substr $sections->{$a}, 1;
-        my $bn = substr $sections->{$b}, 1;
+        my $an = substr($sections->{$a}, 1);
+        my $bn = substr($sections->{$b}, 1);
         return $an <=> $bn;
     };
     my @sorted = sort { $by_tag->() } keys %{$sections};
@@ -408,16 +408,16 @@ sub output_navbar {
         # If this isn't the first thing on a line, add the separator.
         if (length($output) != 0) {
             $output .= q{  | };
-            $length += length q{ | };
+            $length += length(q{ | });
         }
 
         # Convert the section names to titlecase.
-        my $name = join q{ }, map { ucfirst lc $_ } split q{ }, $section;
+        my $name = join(q{ }, map { ucfirst(lc($_)) } split(q{ }, $section));
         $name =~ s{ \b And \b }{and}xmsg;
 
         # Add it to the current line.
         $output .= "\\link[#$tag][$name]\n";
-        $length += length $name;
+        $length += length($name);
     }
 
     # Output any remaining partial line and the end of the navbar.
@@ -447,8 +447,8 @@ sub output_header {
     if (defined $subheading) {
         $self->output("\\class(subhead)[($subheading)]\n\n");
     }
-    $self->output_navbar();
-    $self->output_contents();
+    $self->output_navbar;
+    $self->output_contents;
     return;
 }
 
@@ -647,7 +647,7 @@ sub heading {
     my ($self, $text, $level, $tag) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item();
+    $self->finish_item;
 
     # Strip any trailing whitespace.
     $text =~ s{ \s+ \z }{}xms;
@@ -680,7 +680,7 @@ sub cmd_head1 {
     # If we're in the NAME section and no title was explicitly set, set the
     # flag used in cmd_para to parse the NAME text specially and then do
     # nothing else (since we won't print out the NAME section as itself.
-    if ($text eq 'NAME' && !exists $self->{opt_title}) {
+    if ($text eq 'NAME' && !exists($self->{opt_title})) {
         $self->{IN_NAME} = 1;
         return;
     }
@@ -716,7 +716,7 @@ sub cmd_head4 { my ($self, $atr, $text) = @_; return $self->heading($text, 5) }
 sub finish_item {
     my ($self) = @_;
     if ($self->{ITEM_PENDING}) {
-        $self->item();
+        $self->item;
     }
     if ($self->{ITEM_OPEN}) {
         $self->output("]\n");
@@ -736,7 +736,7 @@ sub finish_item {
 sub over_common_start {
     my ($self, $type, $attrs) = @_;
     $self->{ITEM_OPEN} = 0;
-    push @{ $self->{ITEMS} }, q{};
+    push(@{ $self->{ITEMS} }, q{});
     return;
 }
 
@@ -750,10 +750,10 @@ sub over_common_end {
     my ($self) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item();
+    $self->finish_item;
 
     # Pop the item off the stack.
-    pop @{ $self->{ITEMS} };
+    pop(@{ $self->{ITEMS} });
 
     # Set pending based on whether there's still another level of item open.
     if (@{ $self->{ITEMS} } > 0) {

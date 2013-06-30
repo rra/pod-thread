@@ -1,5 +1,10 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* bin/pod2thread: Update coding style for current Stanford
+	standard.
+	* lib/Pod/Thread.pm: Likewise.
+	* t/output/basic.t: Likewise.
+
 	* t/data/perl.conf: New test configuration.
 	* t/pod-spelling.t: Move to...
 	* t/docs/pod-spelling.t: ...here.  Update to rra-c-util version.

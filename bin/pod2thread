@@ -35,21 +35,21 @@ sub find_headings {
 
     # Parse the POD file looking for =head1 and for any CVS Id strings.
     my (@headings, $id);
-  LINE:
     open my $pod, '<', $file or die "Can't open $file: $!\n";
+  LINE:
     while (defined(my $line = <$pod>)) {
         if ($line =~ s{ \A =head1 \s+ }{}xms) {
             my $heading = $line;
             $heading =~ s{ \s+ \z }{}xms;
-            next if ($heading eq 'NAME' && $navbar);
+            next LINE if ($heading eq 'NAME' && $navbar);
             $heading =~ s{ [BFISZ] <([^>]*)> }{$1}xmsg;
-            push @headings, $heading;
+            push(@headings, $heading);
         }
         if ($line =~ m{ (\$ Id: .* \$) }xms) {
             $id = $1;
         }
     }
-    close $pod or die "Can't close $file: $!\n";
+    close($pod) or die "Can't close $file: $!\n";
 
     # Tag the headings with S<n> starting with <n> == 1.  HTML tags have to
     # start with a letter.
