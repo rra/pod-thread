@@ -1,5 +1,9 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* lib/Pod/Thread.pm (output): Encode the output into UTF-8 if
+	necessary.  Fixes ISO 8859-1 non-breaking spaces left behind in
+	thread output.
+
 	* scripts/pod2thread (find_headings): Strip formatting codes from
 	headings that will go into the table of contents or navbar.  We
 	don't have a way to format these, so the formatting codes would

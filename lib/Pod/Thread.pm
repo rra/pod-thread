@@ -22,6 +22,7 @@ use warnings;
 use base qw(Pod::Simple);
 
 use Carp qw(croak);
+use Encode qw(encode);
 use Readonly;
 use Text::Wrap qw(wrap);
 
@@ -297,6 +298,11 @@ sub output {
     # Defer any trailing newlines beyond a single newline.
     if ($text =~ s{ \n (\n+) \z }{\n}xms) {
         $self->{SPACE} = $1;
+    }
+
+    # Encode the output as needed.
+    if ($self->{ENCODE}) {
+        $text = encode('UTF-8', $text);
     }
 
     # Output the text.
