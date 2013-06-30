@@ -42,6 +42,7 @@ sub find_headings {
             my $heading = $line;
             $heading =~ s{ \s+ \z }{}xms;
             next if ($heading eq 'NAME' && $navbar);
+            $heading =~ s{ [BFISZ] <([^>]*)> }{$1}xmsg;
             push @headings, $heading;
         }
         if ($line =~ m{ (\$ Id: .* \$) }xms) {

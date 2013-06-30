@@ -1,5 +1,13 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* scripts/pod2thread (find_headings): Strip formatting codes from
+	headings that will go into the table of contents or navbar.  We
+	don't have a way to format these, so the formatting codes would
+	otherwise be left as literal strings.
+	* lib/Pod/Thread.pm (cmd_head1): Strip markup from the head1 text
+	before seeing if it's mentioned in the table of contents or
+	navbar.
+
 	* t/basic.t: Adjust non-numeric item test to force all item tags
 	to be non-numeric, required by the current Pod::Simple.
 

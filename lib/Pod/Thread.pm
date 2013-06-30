@@ -677,11 +677,14 @@ sub cmd_head1 {
     }
 
     # Not in the name section.  See if we have section information, and if so,
-    # add a tag to the header.
+    # add a tag to the header.  We have to strip any embedded markup from the
+    # section text.
     $self->{IN_NAME} = 0;
     my $sections = $self->{opt_contents} || $self->{opt_navbar};
-    if ($sections && $sections->{$text}) {
-        return $self->heading($text, 2, "#$sections->{$text}");
+    my $section = $text;
+    $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
+    if ($sections && $sections->{$section}) {
+        return $self->heading($text, 2, "#$sections->{$section}");
     } else {
         return $self->heading($text, 2);
     }
