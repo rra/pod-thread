@@ -11,10 +11,12 @@ use 5.008;
 use strict;
 use warnings;
 
-use Module::Build;
+use lib 'tools/lib';
+
+use Module::Build::SetVersion;
 
 # Basic package configuration.
-my $build = Module::Build->new(
+my $build = Module::Build::SetVersion->new(
     module_name          => 'Pod::Thread',
     dist_abstract        => 'Convert POD data to thread HTML macro language',
     dist_author          => 'Russ Allbery <rra@stanford.edu>',

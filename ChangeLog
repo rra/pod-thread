@@ -1,5 +1,11 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* tools/lib/Module/Build/SetVersion.pm: New Module::Build subclass
+	that handles setting the version number in Perl modules during the
+	build process.
+	* Build.PL: Use Module::Build::SetVersion.
+	* set-version: Delete.
+
 	* Build.PL: New build system using Module::Build.
 	* Makefile.PL: Delete.
 	* VERSION: Delete.  The version is now set in Build.PL.
