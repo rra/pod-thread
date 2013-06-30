@@ -92,7 +92,7 @@ $parser->parse_from_file(@ARGV);
 __END__
 
 =for stopwords
-STDIN STDOUT -chn --navbar subclasses
+Allbery STDIN STDOUT -chn --navbar subclasses
 
 =head1 NAME
 

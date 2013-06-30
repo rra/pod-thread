@@ -888,7 +888,7 @@ sub cmd_l {
 __END__
 
 =for stopwords
-STDIN STDOUT navbar podlators
+Allbery CVS STDIN STDOUT navbar podlators
 
 =head1 NAME
 

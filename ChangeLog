@@ -1,5 +1,9 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* bin/pod2thread: Add new stopwords now that Test::Spelling
+	ignores any local dictionaries.
+	* lib/Pod/Thread.pm: Likewise.
+
 	* tools/lib/Module/Build/SetVersion.pm: New Module::Build subclass
 	that handles setting the version number in Perl modules during the
 	build process.
