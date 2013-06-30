@@ -1,5 +1,9 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* lib/Pod/Thread.pm (reformat): Remove single spaces at the start
+	of lines in wrapped paragraphs, left behind due to Text::Wrap's
+	lack of understanding of two spaces after periods.
+
 	* lib/Pod/Thread.pm (output): Encode the output into UTF-8 if
 	necessary.  Fixes ISO 8859-1 non-breaking spaces left behind in
 	thread output.

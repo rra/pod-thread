@@ -264,6 +264,10 @@ sub reformat {
     local $Text::Wrap::unexpand = 0;
     my $output = wrap(q{}, q{}, $text);
 
+    # Remove stray leading spaces at the start of lines, created by Text::Wrap
+    # getting confused by two spaces after a period.
+    $output =~ s{ \n [ ] (\S) }{\n$1}xmsg;
+
     # Ensure the result ends in two newlines.
     $output =~ s{ \s* \z }{\n\n}xms;
     return $output;
