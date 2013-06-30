@@ -1,3 +1,8 @@
+2013-06-30  Russ Allbery  <rra@stanford.edu>
+
+	* t/basic.t: Adjust non-numeric item test to force all item tags
+	to be non-numeric, required by the current Pod::Simple.
+
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 1.00 released.

@@ -113,7 +113,7 @@ URL without anchor text:
 
 First item.
 
-=item 2
+=item 2Z<>
 
 Second item.
 
