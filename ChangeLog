@@ -1,5 +1,11 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* t/docs/pod-spelling.t: Include the tools directory.
+	* t/docs/pod.t: Likewise.
+	* t/style/critic.t: Likewise.
+	* t/style/minimum-version.t: Likewise.  Also add the bin and
+	examples directories.
+
 	* bin/pod2thread: Update coding style for current Stanford
 	standard.
 	* lib/Pod/Thread.pm: Likewise.

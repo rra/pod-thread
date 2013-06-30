@@ -52,8 +52,8 @@ local $ENV{PERLTIDY} = 't/data/perltidyrc';
 # Import the configuration file and run Perl::Critic.
 Test::Perl::Critic->import(-profile => 't/data/perlcriticrc');
 
-# By default, Test::Perl::Critic only checks blib.  We also want to check t,
-# Build.PL, and examples.
+# By default, Test::Perl::Critic only checks blib.  We also want to check
+# Build.PL, examples, usr, t, and tools, if they exist.
 my @files = Perl::Critic::Utils::all_perl_files('blib');
 if (!@files) {
     @files = Perl::Critic::Utils::all_perl_files('lib');
@@ -61,7 +61,7 @@ if (!@files) {
 if (-f 'Build.PL') {
     push(@files, 'Build.PL');
 }
-for my $dir (qw(examples usr t)) {
+for my $dir (qw(examples usr t tools)) {
     if (-d $dir) {
         push(@files, Perl::Critic::Utils::all_perl_files($dir));
     }

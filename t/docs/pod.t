@@ -38,12 +38,14 @@ use Test::RRA qw(use_prereq);
 
 use_prereq('Test::Pod');
 
-# Check all POD in the Perl distribution.  Add the examples directory if it
-# exists.  Also add any files in usr/bin or usr/sbin, which are widely used in
-# Stanford-internal packages.
+# Check all POD in the Perl distribution.  Add the examples and tools
+# directories if they exist.  Also add any files in usr/bin or usr/sbin, which
+# are widely used in Stanford-internal packages.
 my @files = all_pod_files();
-if (-d 'examples') {
-    push(@files, all_pod_files('examples'));
+for my $path (qw(examples tools)) {
+    if (-d $path) {
+        push(@files, all_pod_files($path));
+    }
 }
 for my $dir (qw(usr/bin usr/sbin)) {
     if (-d $dir) {

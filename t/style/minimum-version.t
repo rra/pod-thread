@@ -39,5 +39,13 @@ use Test::RRA::Config qw($MINIMUM_VERSION);
 
 use_prereq('Test::MinimumVersion');
 
+# Determine the paths to check.
+my @paths = qw(Build.PL lib t);
+for my $path (qw(bin examples tools)) {
+    if (-d $path) {
+        push(@paths, $path);
+    }
+}
+
 # Check all files in the Perl distribution.
-all_minimum_version_ok($MINIMUM_VERSION);
+all_minimum_version_ok($MINIMUM_VERSION, { paths => [@paths] });
