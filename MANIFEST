@@ -5,14 +5,18 @@ lib/Pod/Thread.pm
 LICENSE
 MANIFEST			This list of files
 README
-set-version
-t/basic.t
-t/critic.t
+t/data/perl.conf
 t/data/perlcriticrc
 t/data/perltidyrc
-t/minimum-version.t
-t/pod-spelling.t
-t/pod.t
-t/strict.t
-t/synopsis.t
+t/docs/pod-spelling.t
+t/docs/pod.t
+t/docs/synopsis.t
+t/lib/Test/RRA.pm
+t/lib/Test/RRA/Config.pm
+t/output/basic.t
+t/style/coverage.t
+t/style/critic.t
+t/style/minimum-version.t
+t/style/strict.t
 TODO
+tools/lib/Module/Build/SetVersion.pm
