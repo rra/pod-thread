@@ -1,5 +1,12 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* Build.PL: New build system using Module::Build.
+	* Makefile.PL: Delete.
+	* VERSION: Delete.  The version is now set in Build.PL.
+	* scripts/pod2thread: Move to...
+	* bin/pod2thread: ...here, to match the standard Module::Build
+	package layout.
+
 	* lib/Pod/Thread.pm (reformat): Remove single spaces at the start
 	of lines in wrapped paragraphs, left behind due to Text::Wrap's
 	lack of understanding of two spaces after periods.

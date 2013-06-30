@@ -1,11 +1,10 @@
+bin/pod2thread
+Build.PL
 ChangeLog
 lib/Pod/Thread.pm
 LICENSE
-Makefile.PL
 MANIFEST			This list of files
-MYMETA.yml
 README
-scripts/pod2thread
 set-version
 t/basic.t
 t/critic.t
@@ -17,4 +16,3 @@ t/pod.t
 t/strict.t
 t/synopsis.t
 TODO
-VERSION
