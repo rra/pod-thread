@@ -123,7 +123,7 @@ sub process_pm_files {
 __END__
 
 =for stopwords
-Allbery Readonly CPAN subclasses
+Allbery Readonly CPAN metadata subclasses
 
 =head1 NAME
 
