@@ -1,5 +1,26 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* t/data/perl.conf: New test configuration.
+	* t/pod-spelling.t: Move to...
+	* t/docs/pod-spelling.t: ...here.  Update to rra-c-util version.
+	* t/pod.t: Move to...
+	* t/docs/pod.t: ...here.  Update to rra-c-util version.
+	* t/synopsis.t: Move to...
+	* t/docs/synopsis.t: ...here.  Update to rra-c-util version.
+	* t/lib/Test/RRA.pm: New helper module for standard tests.
+	* t/lib/Test/RRA/Config.pm: Likewise.
+	* t/basic.t: Move to...
+	* t/output/basic.t: Here.
+	* t/style/coverage.t: New test, taking over coverage testing from
+	the strict.t test, which now only tests strict and warnings.
+	* t/critic.t: Move to...
+	* t/style/critic.t: ...here.  Update to rra-c-util version.
+	* t/minimum-version.t: Move to...
+	* t/style/minimum-version.t: ...here.  Update to rra-c-util
+	version.
+	* t/strict.t: Move to...
+	* t/style/strict.t: ...here.
+
 	* t/data/perlcriticrc: Update to current Stanford style.
 	* t/data/perltidyrc: Likewise.
 	* lib/Pod/Thread.pm: Remove now-unnecessary perlcritic overrides.
