@@ -481,7 +481,6 @@ sub start_document {
     # set.  If it does not, we'll need to encode our output before printing it
     # (handled in the output method).  Wrap the check in an eval to handle
     # versions of Perl without PerlIO.
-    ## no critic (ErrorHandling::RequireCheckingReturnValueOfEval)
     $self->{ENCODE} = 1;
     eval {
         my @options = (output => 1, details => 1);
@@ -701,11 +700,9 @@ sub cmd_head1 {
 }
 
 # All the other headings, which just hand off to the heading method.
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 sub cmd_head2 { my ($self, $atr, $text) = @_; return $self->heading($text, 3) }
 sub cmd_head3 { my ($self, $atr, $text) = @_; return $self->heading($text, 4) }
 sub cmd_head4 { my ($self, $atr, $text) = @_; return $self->heading($text, 5) }
-## use critic
 
 ##############################################################################
 # List handling

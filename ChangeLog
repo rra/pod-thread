@@ -1,5 +1,9 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* t/data/perlcriticrc: Update to current Stanford style.
+	* t/data/perltidyrc: Likewise.
+	* lib/Pod/Thread.pm: Remove now-unnecessary perlcritic overrides.
+
 	* bin/pod2thread: Add new stopwords now that Test::Spelling
 	ignores any local dictionaries.
 	* lib/Pod/Thread.pm: Likewise.
