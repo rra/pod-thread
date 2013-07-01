@@ -41,7 +41,7 @@ sub read_test {
     while (defined($line = <DATA>)) {
         last DATA if $line eq "###\n";
     }
-    if (!defined $line) {
+    if (!defined($line)) {
         return;
     }
     $input  = read_test_section();
@@ -113,7 +113,7 @@ URL without anchor text:
 
 First item.
 
-=item 2
+=item 2Z<>
 
 Second item.
 

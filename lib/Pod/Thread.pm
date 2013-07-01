@@ -22,6 +22,7 @@ use warnings;
 use base qw(Pod::Simple);
 
 use Carp qw(croak);
+use Encode qw(encode);
 use Readonly;
 use Text::Wrap qw(wrap);
 
@@ -190,7 +191,7 @@ sub _handle_element_start {
     # If we have a command handler, we need to accumulate the contents of the
     # tag before calling it.  If we have a start handler, call it immediately.
     if ($self->can("cmd_$method")) {
-        push @{ $self->{PENDING} }, [$attrs, q{}];
+        push(@{ $self->{PENDING} }, [$attrs, q{}]);
     } elsif ($self->can("start_$method")) {
         $method = 'start_' . $method;
         $self->$method($attrs, q{});
@@ -226,7 +227,7 @@ sub _handle_element_end {
         return;
     } elsif ($self->can("end_$method")) {
         $method = 'end_' . $method;
-        return $self->$method();
+        return $self->$method;
     }
 }
 
@@ -262,6 +263,10 @@ sub reformat {
     local $Text::Wrap::huge     = 'overflow';
     local $Text::Wrap::unexpand = 0;
     my $output = wrap(q{}, q{}, $text);
+
+    # Remove stray leading spaces at the start of lines, created by Text::Wrap
+    # getting confused by two spaces after a period.
+    $output =~ s{ \n [ ] (\S) }{\n$1}xmsg;
 
     # Ensure the result ends in two newlines.
     $output =~ s{ \s* \z }{\n\n}xms;
@@ -299,6 +304,11 @@ sub output {
         $self->{SPACE} = $1;
     }
 
+    # Encode the output as needed.
+    if ($self->{ENCODE}) {
+        $text = encode('UTF-8', $text);
+    }
+
     # Output the text.
     print { $self->{output_fh} } $text
       or die "Cannot write to output: $!\n";
@@ -320,8 +330,8 @@ sub output {
 sub sorted_sections {
     my ($self, $sections) = @_;
     my $by_tag = sub {
-        my $an = substr $sections->{$a}, 1;
-        my $bn = substr $sections->{$b}, 1;
+        my $an = substr($sections->{$a}, 1);
+        my $bn = substr($sections->{$b}, 1);
         return $an <=> $bn;
     };
     my @sorted = sort { $by_tag->() } keys %{$sections};
@@ -398,16 +408,16 @@ sub output_navbar {
         # If this isn't the first thing on a line, add the separator.
         if (length($output) != 0) {
             $output .= q{  | };
-            $length += length q{ | };
+            $length += length(q{ | });
         }
 
         # Convert the section names to titlecase.
-        my $name = join q{ }, map { ucfirst lc $_ } split q{ }, $section;
+        my $name = join(q{ }, map { ucfirst(lc($_)) } split(q{ }, $section));
         $name =~ s{ \b And \b }{and}xmsg;
 
         # Add it to the current line.
         $output .= "\\link[#$tag][$name]\n";
-        $length += length $name;
+        $length += length($name);
     }
 
     # Output any remaining partial line and the end of the navbar.
@@ -437,8 +447,8 @@ sub output_header {
     if (defined $subheading) {
         $self->output("\\class(subhead)[($subheading)]\n\n");
     }
-    $self->output_navbar();
-    $self->output_contents();
+    $self->output_navbar;
+    $self->output_contents;
     return;
 }
 
@@ -471,7 +481,6 @@ sub start_document {
     # set.  If it does not, we'll need to encode our output before printing it
     # (handled in the output method).  Wrap the check in an eval to handle
     # versions of Perl without PerlIO.
-    ## no critic (ErrorHandling::RequireCheckingReturnValueOfEval)
     $self->{ENCODE} = 1;
     eval {
         my @options = (output => 1, details => 1);
@@ -638,7 +647,7 @@ sub heading {
     my ($self, $text, $level, $tag) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item();
+    $self->finish_item;
 
     # Strip any trailing whitespace.
     $text =~ s{ \s+ \z }{}xms;
@@ -671,28 +680,29 @@ sub cmd_head1 {
     # If we're in the NAME section and no title was explicitly set, set the
     # flag used in cmd_para to parse the NAME text specially and then do
     # nothing else (since we won't print out the NAME section as itself.
-    if ($text eq 'NAME' && !exists $self->{opt_title}) {
+    if ($text eq 'NAME' && !exists($self->{opt_title})) {
         $self->{IN_NAME} = 1;
         return;
     }
 
     # Not in the name section.  See if we have section information, and if so,
-    # add a tag to the header.
+    # add a tag to the header.  We have to strip any embedded markup from the
+    # section text.
     $self->{IN_NAME} = 0;
     my $sections = $self->{opt_contents} || $self->{opt_navbar};
-    if ($sections && $sections->{$text}) {
-        return $self->heading($text, 2, "#$sections->{$text}");
+    my $section = $text;
+    $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
+    if ($sections && $sections->{$section}) {
+        return $self->heading($text, 2, "#$sections->{$section}");
     } else {
         return $self->heading($text, 2);
     }
 }
 
 # All the other headings, which just hand off to the heading method.
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 sub cmd_head2 { my ($self, $atr, $text) = @_; return $self->heading($text, 3) }
 sub cmd_head3 { my ($self, $atr, $text) = @_; return $self->heading($text, 4) }
 sub cmd_head4 { my ($self, $atr, $text) = @_; return $self->heading($text, 5) }
-## use critic
 
 ##############################################################################
 # List handling
@@ -706,7 +716,7 @@ sub cmd_head4 { my ($self, $atr, $text) = @_; return $self->heading($text, 5) }
 sub finish_item {
     my ($self) = @_;
     if ($self->{ITEM_PENDING}) {
-        $self->item();
+        $self->item;
     }
     if ($self->{ITEM_OPEN}) {
         $self->output("]\n");
@@ -726,7 +736,7 @@ sub finish_item {
 sub over_common_start {
     my ($self, $type, $attrs) = @_;
     $self->{ITEM_OPEN} = 0;
-    push @{ $self->{ITEMS} }, q{};
+    push(@{ $self->{ITEMS} }, q{});
     return;
 }
 
@@ -740,10 +750,10 @@ sub over_common_end {
     my ($self) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item();
+    $self->finish_item;
 
     # Pop the item off the stack.
-    pop @{ $self->{ITEMS} };
+    pop(@{ $self->{ITEMS} });
 
     # Set pending based on whether there's still another level of item open.
     if (@{ $self->{ITEMS} } > 0) {
@@ -875,7 +885,7 @@ sub cmd_l {
 __END__
 
 =for stopwords
-STDIN STDOUT navbar podlators
+Allbery CVS STDIN STDOUT navbar podlators
 
 =head1 NAME
 
