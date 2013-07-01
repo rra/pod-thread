@@ -1,3 +1,14 @@
+libpod-thread-perl (1.01-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Strip formatting codes from headers in the table of contents or
+      navbar since they can't be formatted properly.
+    - Properly encode output in UTF-8.
+    - Remove spacing artifacts created by Text::Wrap.
+    - Improved and more complete test suite.
+
+ -- Russ Allbery <rra@debian.org>  Sun, 30 Jun 2013 19:23:50 -0700
+
 libpod-thread-perl (1.00-1) unstable; urgency=low
 
   * New upstream release.
