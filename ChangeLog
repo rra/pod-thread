@@ -1,5 +1,7 @@
 2013-06-30  Russ Allbery  <rra@stanford.edu>
 
+	* Build.PL: Pod::Thread 1.01 released.
+
 	* t/docs/pod-spelling.t: Include the tools directory.
 	* t/docs/pod.t: Likewise.
 	* t/style/critic.t: Likewise.
