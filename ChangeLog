@@ -1,3 +1,79 @@
+2013-06-30  Russ Allbery  <rra@stanford.edu>
+
+	* Build.PL: Pod::Thread 1.01 released.
+
+	* t/docs/pod-spelling.t: Include the tools directory.
+	* t/docs/pod.t: Likewise.
+	* t/style/critic.t: Likewise.
+	* t/style/minimum-version.t: Likewise.  Also add the bin and
+	examples directories.
+
+	* bin/pod2thread: Update coding style for current Stanford
+	standard.
+	* lib/Pod/Thread.pm: Likewise.
+	* t/output/basic.t: Likewise.
+
+	* t/data/perl.conf: New test configuration.
+	* t/pod-spelling.t: Move to...
+	* t/docs/pod-spelling.t: ...here.  Update to rra-c-util version.
+	* t/pod.t: Move to...
+	* t/docs/pod.t: ...here.  Update to rra-c-util version.
+	* t/synopsis.t: Move to...
+	* t/docs/synopsis.t: ...here.  Update to rra-c-util version.
+	* t/lib/Test/RRA.pm: New helper module for standard tests.
+	* t/lib/Test/RRA/Config.pm: Likewise.
+	* t/basic.t: Move to...
+	* t/output/basic.t: Here.
+	* t/style/coverage.t: New test, taking over coverage testing from
+	the strict.t test, which now only tests strict and warnings.
+	* t/critic.t: Move to...
+	* t/style/critic.t: ...here.  Update to rra-c-util version.
+	* t/minimum-version.t: Move to...
+	* t/style/minimum-version.t: ...here.  Update to rra-c-util
+	version.
+	* t/strict.t: Move to...
+	* t/style/strict.t: ...here.
+
+	* t/data/perlcriticrc: Update to current Stanford style.
+	* t/data/perltidyrc: Likewise.
+	* lib/Pod/Thread.pm: Remove now-unnecessary perlcritic overrides.
+
+	* bin/pod2thread: Add new stopwords now that Test::Spelling
+	ignores any local dictionaries.
+	* lib/Pod/Thread.pm: Likewise.
+
+	* tools/lib/Module/Build/SetVersion.pm: New Module::Build subclass
+	that handles setting the version number in Perl modules during the
+	build process.
+	* Build.PL: Use Module::Build::SetVersion.
+	* set-version: Delete.
+
+	* Build.PL: New build system using Module::Build.
+	* Makefile.PL: Delete.
+	* VERSION: Delete.  The version is now set in Build.PL.
+	* scripts/pod2thread: Move to...
+	* bin/pod2thread: ...here, to match the standard Module::Build
+	package layout.
+
+	* lib/Pod/Thread.pm (reformat): Remove single spaces at the start
+	of lines in wrapped paragraphs, left behind due to Text::Wrap's
+	lack of understanding of two spaces after periods.
+
+	* lib/Pod/Thread.pm (output): Encode the output into UTF-8 if
+	necessary.  Fixes ISO 8859-1 non-breaking spaces left behind in
+	thread output.
+
+	* scripts/pod2thread (find_headings): Strip formatting codes from
+	headings that will go into the table of contents or navbar.  We
+	don't have a way to format these, so the formatting codes would
+	otherwise be left as literal strings.
+	* lib/Pod/Thread.pm (cmd_head1): Strip markup from the head1 text
+	before seeing if it's mentioned in the table of contents or
+	navbar.
+
+	* t/basic.t: Adjust non-numeric item test to force all item tags
+	to be non-numeric, required by the current Pod::Simple.
+
 2013-01-05  Russ Allbery  <rra@stanford.edu>
 
 	* VERSION: Pod::Thread 1.00 released.

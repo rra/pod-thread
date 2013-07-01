@@ -15,19 +15,10 @@ License: Perl
  Artistic License.  Please see your Perl distribution for the details and
  copies of the licenses.
 
-Files: t/critic.t t/minimum-version.t t/pod-spelling.t t/pod.t t/strict.t
- t/synopsis.t
-Copyright: no copyright notice, see License
-License: rra-public-domain
- The authors hereby relinquish any claim to any copyright that they may
- have in this work, whether granted under contract or by operation of law
- or international treaty, and hereby commit to the public, at large, that
- they shall not, at any time in the future, seek to enforce any copyright
- in this work against any person or entity, or prevent any person or
- entity from copying, publishing, distributing or creating derivative
- works of this work.
-
-Files: t/data/perlcriticrc
+Files: t/data/perlcriticrc t/docs/pod-spelling.t t/docs/pod.t
+ t/docs/synopsis.t t/lib/Test/RRA.pm t/lib/Test/RRA/Config.pm
+ t/style/coverage.t t/style/critic.t t/style/minimum-version.t
+ t/style/strict.t
 Copyright: 2011-2013
     The Board of Trustees of the Leland Stanford Junior University
 License: Expat

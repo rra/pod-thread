@@ -1,24 +1,25 @@
---- #YAML:1.0
-name:               Pod-Thread
-version:            1.00
-abstract:           Convert POD data to the HTML macro language thread
+---
+abstract: 'Convert POD data to thread HTML macro language'
 author:
-    - Russ Allbery <rra@stanford.edu>
-license:            perl
-distribution_type:  module
+  - 'Russ Allbery <rra@stanford.edu>'
+build_requires: {}
 configure_requires:
-    ExtUtils::MakeMaker:  0
-build_requires:
-    ExtUtils::MakeMaker:  0
-requires:
-    perl:         5.008
-    Pod::Simple:  3.06
-    Readonly:     0
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.57_05
+  Module::Build: 0.28
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4005, CPAN::Meta::Converter version 2.120921'
+license: perl
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Pod-Thread
+provides:
+  Pod::Thread:
+    file: lib/Pod/Thread.pm
+    version: 0
+requires:
+  Pod::Simple: 3.06
+  Readonly: 0
+  perl: 5.008
+resources:
+  license: http://dev.perl.org/licenses/
+version: 1.01
