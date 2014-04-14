@@ -5,7 +5,7 @@
 # distribution version.  It is based conceptually on Module::Build::PM_Filter,
 # but is much simpler since it only takes that one action.
 #
-# Copyright 2013 Russ Allbery <rra@stanford.edu>
+# Copyright 2013 Russ Allbery <rra@cpan.org>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -175,11 +175,11 @@ files to replace the version as described above.
 
 =head1 AUTHOR
 
-Russ Allbery <rra@stanford.edu>.
+Russ Allbery <rra@cpan.org>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2013 Russ Allbery <rra@stanford.edu>
+Copyright 2013 Russ Allbery <rra@cpan.org>
 
 This program is free software; you may redistribute it and/or modify it
 under the same terms as Perl itself.

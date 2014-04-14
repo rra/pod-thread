@@ -2,7 +2,7 @@
 #
 # Build script for Pod::Thread distribution.
 #
-# Copyright 2002, 2013 Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2013 Russ Allbery <rra@cpan.org>
 #
 # This program is free software; you may redistribute it and/or modify it
 # under the same terms as Perl itself.
@@ -19,7 +19,7 @@ use Module::Build::SetVersion;
 my $build = Module::Build::SetVersion->new(
     module_name          => 'Pod::Thread',
     dist_abstract        => 'Convert POD data to thread HTML macro language',
-    dist_author          => 'Russ Allbery <rra@stanford.edu>',
+    dist_author          => 'Russ Allbery <rra@cpan.org>',
     dist_version         => '1.01',
     license              => 'perl',
     recursive_test_files => 1,

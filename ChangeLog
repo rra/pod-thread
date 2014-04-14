@@ -1,4 +1,4 @@
-2013-06-30  Russ Allbery  <rra@stanford.edu>
+2013-06-30  Russ Allbery  <rra@cpan.org>
 
 	* Build.PL: Pod::Thread 1.01 released.
 
@@ -74,7 +74,7 @@
 	* t/basic.t: Adjust non-numeric item test to force all item tags
 	to be non-numeric, required by the current Pod::Simple.
 
-2013-01-05  Russ Allbery  <rra@stanford.edu>
+2013-01-05  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 1.00 released.
 
@@ -131,7 +131,7 @@
 	* Makefile.PL: Add Readonly to prerequisites and replace
 	Pod::Parser with Pod::Simple.
 
-2013-01-04  Russ Allbery  <rra@stanford.edu>
+2013-01-04  Russ Allbery  <rra@cpan.org>
 
 	* t/pod.t: New test for POD syntax.
 	* t/pod-spelling.t: New test for spelling in POD documentation.
@@ -142,7 +142,7 @@
 	if there was no anchor text.
 	* t/basic.t: Test URL rendering with and without anchor text.
 
-2009-01-25  Russ Allbery  <rra@stanford.edu>
+2009-01-25  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.12 released.
 
@@ -154,14 +154,14 @@
 	* t/basic.t: New file.  Add test suite framework and test the
 	=item 0 fix.
 
-2008-11-12  Russ Allbery  <rra@stanford.edu>
+2008-11-12  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.11 released.
 
 	* lib/Pod/Thread.pm: Minor coding style updates: require Perl
 	5.006 and use "our" instead of "use vars".
 
-2008-04-15  Russ Allbery  <rra@stanford.edu>
+2008-04-15  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.10 released.
 
@@ -171,7 +171,7 @@
 	contents section.
 	(navbar): Likewise before adding it to the navbar.
 
-2002-09-15  Russ Allbery  <rra@stanford.edu>
+2002-09-15  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.09 released.
 
@@ -200,7 +200,7 @@
 
 	* scripts/pod2thread.PL: Use Pod::Usage for pod2usage.
 
-2002-09-11  Russ Allbery  <rra@stanford.edu>
+2002-09-11  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.06 released.
 
@@ -229,7 +229,7 @@
 	variable for Pod::Thread.  Support the -t flag.
 	(find_headings): New function, called to find top level headings.
 
-2002-06-29  Russ Allbery  <rra@stanford.edu>
+2002-06-29  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.05 released.  Make the package version
 	number match the module version.
@@ -243,7 +243,7 @@
 	(interior_sequence): Pass all entities not found in the stripped
 	table along to spin as \entity commands.
 
-2002-06-28  Russ Allbery  <rra@stanford.edu>
+2002-06-28  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.03 released.
 
@@ -257,7 +257,7 @@
 	* lib/Pod/Thread.pm (preprocess_paragraph): Be more conservative
 	about what we recognize as an Id tag in the input.
 
-2002-06-27  Russ Allbery  <rra@stanford.edu>
+2002-06-27  Russ Allbery  <rra@cpan.org>
 
 	* VERSION: Pod::Thread 0.01 released.
 
