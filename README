@@ -1,11 +1,10 @@
-                         Pod::Thread version 1.01
+                             Pod::Thread 1.02
          (Format POD source into thread, an HTML macro language)
+                Maintained by Russ Allbery <rra@cpan.org>
 
-              Maintained by Russ Allbery <rra@cpan.org>
-
-  This program is free software; you may redistribute it and/or modify it
-  under the same terms as Perl itself.  Please see the section LICENSE
-  below for more information.
+  Copyright 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>.  This
+  software is distributed under a BSD-style license.  Please see the
+  section LICENSE below for more information.
 
 BLURB
 
@@ -18,125 +17,145 @@ BLURB
 DESCRIPTION
 
   This package contains a module to translate POD into thread, an HTML
-  macro language.  As such, it's not very useful without spin, a separate
-  program to convert thread into HTML.  spin is available from:
+  macro language.  As such, it's not very useful without spin [1], a
+  separate program to convert thread into HTML.  I wrote this module for
+  my personal needs and it may not be (and in fact probably isn't)
+  suitable for more general use as yet.
 
-      http://www.eyrie.org/~eagle/software/web/
+  [1] https://www.eyrie.org/~eagle/software/web/
 
-  and the most recent version of this module will be found on the same
-  page.  I wrote this module for my personal needs and it may not be (and
-  in fact probably isn't) suitable for more general use as yet.
+  The eventual intention is to incorporate spin into DocKnot [2], at which
+  point this module will provide the POD support for DocKnot as a static
+  site generator.  I have no estimate for when that work will be done.
 
-  The eventual intention is to turn the core portions of spin into a
-  second Perl module and add it to this package, which will make this a
-  more generally useful package for HTML page generation.  I have no
-  estimate for when that work will be done.
+  [2] https://www.eyrie.org/~eagle/software/docknot/
 
   The conversion done by this module is mostly straightforward.  The only
-  notable parts are a search through the full processed file for a CVS or
-  Subversion Id string to pass on to the thread source and the optional
-  generation of a table of contents or a navigation bar at the top of the
-  generated file.
+  notable parts are the optional generation of a table of contents or a
+  navigation bar at the top of the generated file.
 
 REQUIREMENTS
 
-  Pod::Thread requires Perl 5.8 or later, Pod::Parser 3.06 or later, and
-  the Readonly module.  As mentioned above, it's also not particularly
-  useful without spin.
+  Perl 5.8 or later, Pod::Parser 3.06 or later, and the Readonly module.
+  As mentioned above, it's also not particularly useful without spin.
 
-  The test suite makes use of additional Perl modules for some tests.
-  These tests will be skipped automatically if the modules aren't
-  available.  To run the full set of default tests, you will need the Perl
-  modules:
+BUILDING AND INSTALLATION
 
-      Perl::Critic
-      Test::MinimumVersion
-      Test::Pod
-      Test::Pod::Coverage
-      Test::Strict
-      Test::Synopsis
+  Pod::Thread uses Module::Build and can be installed using the same
+  process as any other Module::Build module:
 
-  and their dependencies.  These modules are all available from CPAN.
+      perl Build.PL
+      ./Build
+      ./Build install
 
-  Some parts of the test suite are suppressed by default because those
-  tests are normally only useful for the maintainer.  This includes tests
-  of POD spelling and Perl coding style.  To enable those tests, set the
-  environment variable RRA_MAINTAINER_TESTS to a true value.  For these
-  tests, the additional Perl modules:
+  You will have to run the last command as root unless you're installing
+  into a local Perl module tree in your home directory.
 
-      Devel::Cover
-      Test::Perl::Critic
-      Test::Spelling
+TESTING
 
-  and their dependencies as well as a spell-checking program (several are
-  supported by Test::Spelling) are required.  These modules are all
-  available from CPAN.
+  Pod::Thread comes with a test suite, which you can run after building
+  with:
 
-INSTALLATION
+      ./Build test
 
-  Follow the standard installation procedure for Perl modules, which is to
-  type the following commands:
+  If a test fails, you can run a single test with verbose output via:
 
-      perl Makefile.PL
-      make
-      make install
+      ./Build test --test_files <path-to-test>
 
-  You'll probably need to do the "make install" as root.  This will also
-  install a driver scripts named pod2thread; see its man page for more
-  information.
+  The following additional Perl modules will be used by the test suite if
+  present:
+
+  * Devel::Cover
+  * Test::MinimumVersion
+  * Test::Perl::Critic
+  * Test::Pod
+  * Test::Pod::Coverage
+  * Test::Spelling
+  * Test::Strict
+  * Test::Synopsis
+
+  All are available on CPAN.  Those tests will be skipped if the modules
+  are not available.
+
+  To enable tests that don't detect functionality problems but are used to
+  sanity-check the release, set the environment variable RELEASE_TESTING
+  to a true value.  To enable tests that may be sensitive to the local
+  environment or that produce a lot of false positives without uncovering
+  many problems, set the environment variable AUTHOR_TESTING to a true
+  value.
 
 SUPPORT
 
-  My web tools web page at:
+  The Pod::Thread web page at:
 
-      http://www.eyrie.org/~eagle/software/web/
+      https://www.eyrie.org/~eagle/software/pod-thread/
 
   will always have the current version of this package, the current
   documentation, and pointers to any additional resources.
 
-  Currently, there is no bug tracker for this package since I've not yet
-  uploaded it to CPAN.  I will do so once spin has been converted to a
-  module and is included.
+  For bug tracking, use the issue tracker on GitHub:
 
-  I welcome bug reports and patches for this package at rra@cpan.org.
+      https://github.com/rra/pod-thread/issues
+
   However, please be aware that I tend to be extremely busy and work
-  projects often take priority.  I'll save your mail and get to it as soon
-  as I can, but it may take me a couple of months.
+  projects often take priority.  I'll save your report and get to it as
+  soon as I can, but it may take me a couple of months.
 
 SOURCE REPOSITORY
 
   Pod::Thread is maintained using Git.  You can access the current source
-  by cloning the repository at:
+  on GitHub at:
 
-      git://git.eyrie.org/web/pod-thread.git
+      https://github.com/rra/pod-thread
 
-  or view the repository on the web at:
+  or by cloning the repository at:
 
-      http://git.eyrie.org/?p=web/pod-thread.git
+      https://git.eyrie.org/web/pod-thread.git
 
-  Debian packaging is kept on the debian branch of the Git repository.
-  When contributing modifications, patches (possibly generated by
-  git-format-patch) are preferred to Git pull requests.
+  or view the repository via the web at:
+
+      https://git.eyrie.org/?p=web/pod-thread.git
+
+  The eyrie.org repository is the canonical one, maintained by the author,
+  but using GitHub is probably more convenient for most purposes.  Pull
+  requests are gratefully reviewed and normally accepted.
 
 LICENSE
 
-  The Pod-Thread distribution as a whole is covered by the following
-  copyright statement and license:
+  The Pod::Thread package as a whole is covered by the following copyright
+  statement and license:
 
-    Copyright 2002, 2008, 2009, 2013 Russ Allbery <rra@cpan.org>
+    Copyright 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>
 
-    This program is free software; you may redistribute it and/or modify
-    it under the same terms as Perl itself.  This means that you may
-    choose between the two licenses that Perl is released under: the GNU
-    GPL and the Artistic License.  Please see your Perl distribution for
-    the details and copies of the licenses.
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
 
-  All individual files without an explicit exception below are released
-  under this license.  Some files may have additional copyright holders as
-  noted in those files.  There is detailed information about the licensing
-  of each file in the LICENSE file in this distribution.
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
   Some files in this distribution are individually released under
   different licenses, all of which are compatible with the above general
   package license but which may require preservation of additional
-  notices.  All required notices are preserved in the LICENSE file.
+  notices.  All required notices, and detailed information about the
+  licensing of each file, are recorded in the LICENSE file.
+
+  Files covered by a license with an assigned SPDX License Identifier
+  include SPDX-License-Identifier tags to enable automated processing of
+  license information.  See https://spdx.org/licenses/ for more
+  information.
+
+  For any copyright range specified by files in this package as YYYY-ZZZZ,
+  the range specifies every single year in that closed interval.
