@@ -12,7 +12,7 @@
 
 package Pod::Thread;
 
-use 5.008;
+use 5.010;
 use strict;
 use warnings;
 
@@ -20,7 +20,6 @@ use base qw(Pod::Simple);
 
 use Carp qw(croak);
 use Encode qw(encode);
-use Readonly;
 use Text::Wrap qw(wrap);
 
 our $VERSION = '0.0';
@@ -31,7 +30,7 @@ our $VERSION = '0.0';
 
 # Include only the escapes that are basic ASCII or are not valid XHTML
 # escapes.
-Readonly my %ESCAPES => (
+my %ESCAPES = (
     amp    => q{&},    # ampersand
     apos   => q{'},    # apostrophe (')
     lt     => q{<},    # left chevron, less-than
@@ -44,13 +43,13 @@ Readonly my %ESCAPES => (
 
 # Regex matching a manpage-style entry in the NAME header.  $1 is set to the
 # list of things documented by the man page, and $2 is set to the description.
-Readonly my $NAME_REGEX => qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
+my $NAME_REGEX = qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
 
 # Maximum length of each line when constructing a navbar.
-Readonly my $NAVBAR_LENGTH => 65;
+my $NAVBAR_LENGTH = 65;
 
 # Margin at which to wrap thread output.
-Readonly my $WRAP_MARGIN => 75;
+my $WRAP_MARGIN = 75;
 
 ##############################################################################
 # Initialization
@@ -225,6 +224,8 @@ sub _handle_element_end {
     } elsif ($self->can("end_$method")) {
         $method = 'end_' . $method;
         return $self->$method;
+    } else {
+        return;
     }
 }
 
@@ -327,11 +328,12 @@ sub output {
 sub sorted_sections {
     my ($self, $sections) = @_;
     my $by_tag = sub {
-        my $an = substr($sections->{$a}, 1);
-        my $bn = substr($sections->{$b}, 1);
+        my ($one, $two) = @_;
+        my $an = substr($sections->{$one}, 1);
+        my $bn = substr($sections->{$two}, 1);
         return $an <=> $bn;
     };
-    my @sorted = sort { $by_tag->() } keys %{$sections};
+    my @sorted = sort { $by_tag->($a, $b) } keys %{$sections};
     return @sorted;
 }
 
@@ -409,7 +411,7 @@ sub output_navbar {
         }
 
         # Convert the section names to titlecase.
-        my $name = join(q{ }, map { ucfirst(lc($_)) } split(q{ }, $section));
+        my $name = join(q{ }, map { ucfirst(lc) } split(q{ }, $section));
         $name =~ s{ \b And \b }{and}xmsg;
 
         # Add it to the current line.
@@ -481,7 +483,7 @@ sub start_document {
     $self->{ENCODE} = 1;
     eval {
         my @options = (output => 1, details => 1);
-        my $flag = (PerlIO::get_layers($self->{output_fh}, @options))[-1];
+        my $flag    = (PerlIO::get_layers($self->{output_fh}, @options))[-1];
         if (defined($flag) && ($flag & PerlIO::F_UTF8())) {
             $self->{ENCODE} = 0;
         }
@@ -687,7 +689,7 @@ sub cmd_head1 {
     # section text.
     $self->{IN_NAME} = 0;
     my $sections = $self->{opt_contents} || $self->{opt_navbar};
-    my $section = $text;
+    my $section  = $text;
     $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
     if ($sections && $sections->{$section}) {
         return $self->heading($text, 2, "#$sections->{$section}");
@@ -882,7 +884,8 @@ sub cmd_l {
 __END__
 
 =for stopwords
-Allbery CVS STDIN STDOUT navbar podlators
+Allbery CVS STDIN STDOUT navbar podlators MERCHANTABILITY NONINFRINGEMENT
+sublicense
 
 =head1 NAME
 

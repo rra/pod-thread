@@ -89,7 +89,8 @@ $parser->parse_from_file(@ARGV);
 __END__
 
 =for stopwords
-Allbery STDIN STDOUT -chn --navbar subclasses
+Allbery STDIN STDOUT -chn --navbar subclasses MERCHANTABILITY NONINFRINGEMENT
+sublicense
 
 =head1 NAME
 

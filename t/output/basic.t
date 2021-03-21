@@ -2,11 +2,11 @@
 #
 # Basic rendering tests for Pod::Thread.
 #
-# Copyright 2009, 2013 Russ Allbery <rra@cpan.org>
+# Copyright 2009, 2013, 2021 Russ Allbery <rra@cpan.org>
 #
 # SPDX-License-Identifier: MIT
 
-use 5.008;
+use 5.012;
 use strict;
 use warnings;
 

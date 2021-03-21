@@ -2,13 +2,13 @@
 #
 # Check for perlcritic errors in all code.
 #
-# Checks all Perl code in blib/lib, t, and Makefile.PL for problems uncovered
-# by perlcritic.  This test is disabled unless RRA_MAINTAINER_TESTS is set,
-# since coding style will not interfere with functionality and newer versions
-# of perlcritic may introduce new checks.
+# If author tests are enabled, check all Perl code in blib/lib, examples, usr,
+# t, and Build.PL for problems uncovered by perlcritic, ignoring template
+# files, junk, and any files explicitly configured to be ignored.
 #
-# Written by Russ Allbery <rra@cpan.org>
-# Copyright 2013
+# Written by Russ Allbery <eagle@eyrie.org>
+# Copyright 2019-2020 Russ Allbery <eagle@eyrie.org>
+# Copyright 2013-2014
 #     The Board of Trustees of the Leland Stanford Junior University
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,19 +28,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
+#
+# SPDX-License-Identifier: MIT
 
-use 5.006;
+use 5.008;
 use strict;
 use warnings;
 
 use lib 't/lib';
 
-use Test::More;
-use Test::RRA qw(skip_unless_maintainer use_prereq);
+use Test::RRA qw(skip_unless_author use_prereq);
 use Test::RRA::Config qw(@CRITIC_IGNORE);
 
-# Skip tests unless we're running the test suite in maintainer mode.
-skip_unless_maintainer('Coding style tests');
+use Test::More;
+
+# Skip tests unless we're running author tests since this test is too
+# sensitive to the exact version of Perl::Critic to be generally useful.
+skip_unless_author('Coding style tests');
 
 # Load prerequisite modules.
 use_prereq('Perl::Critic::Utils');
@@ -52,16 +56,16 @@ local $ENV{PERLTIDY} = 't/data/perltidyrc';
 # Import the configuration file and run Perl::Critic.
 Test::Perl::Critic->import(-profile => 't/data/perlcriticrc');
 
-# By default, Test::Perl::Critic only checks blib.  We also want to check
-# Build.PL, examples, usr, t, and tools, if they exist.
+# By default, Test::Perl::Critic only checks blib.  We also want to check t,
+# Build.PL, and examples.
 my @files = Perl::Critic::Utils::all_perl_files('blib');
 if (!@files) {
     @files = Perl::Critic::Utils::all_perl_files('lib');
 }
-if (-f 'Build.PL') {
+if (-e 'Build.PL') {
     push(@files, 'Build.PL');
 }
-for my $dir (qw(examples usr t tools)) {
+for my $dir (qw(examples usr t)) {
     if (-d $dir) {
         push(@files, Perl::Critic::Utils::all_perl_files($dir));
     }
@@ -81,3 +85,7 @@ plan tests => scalar @files;
 for my $file (@files) {
     critic_ok($file);
 }
+
+# On Debian with perltidy 20130922-1, a perltidy.LOG file gets left behind in
+# the current directory.  Remove it if it exists.
+unlink('perltidy.LOG');

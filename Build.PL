@@ -2,7 +2,7 @@
 #
 # Build script for Pod::Thread distribution.
 #
-# Copyright 2002, 2013 Russ Allbery <rra@cpan.org>
+# Copyright 2002, 2013, 2021 Russ Allbery <rra@cpan.org>
 #
 # SPDX-License-Identifier: MIT
 
@@ -28,7 +28,6 @@ my $build = Module::Build::SetVersion->new(
     configure_requires => { 'Module::Build' => 0.28 },
     requires           => {
         'Pod::Simple' => 3.06,
-        'Readonly'    => 0,
         perl          => '5.008',
     },
 );

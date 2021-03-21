@@ -40,8 +40,8 @@ navigation bar at the top of the generated file.
 
 ## Requirements
 
-Perl 5.8 or later, Pod::Parser 3.06 or later, and the Readonly module.  As
-mentioned above, it's also not particularly useful without spin.
+Perl 5.8 or later and Pod::Parser 3.06 or later.  As mentioned above, it's
+also not particularly useful without spin.
 
 ## Building and Installation
 
@@ -76,6 +76,7 @@ The following additional Perl modules will be used by the test suite if
 present:
 
 * Devel::Cover
+* Perl::Critic::Freenode
 * Test::MinimumVersion
 * Test::Perl::Critic
 * Test::Pod
