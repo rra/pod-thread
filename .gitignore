@@ -1,9 +1,8 @@
 /Build
-/META.*
-/MYMETA.*
-/Makefile.PL
+/MANIFEST.bak
+/MYMETA.json
+/MYMETA.json.lock
+/MYMETA.yml
 /_build/
 /blib/
 /cover_db/
-*.bak
-*.tar.gz
