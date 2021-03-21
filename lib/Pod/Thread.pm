@@ -979,7 +979,7 @@ configured output string or file handle.
 L<Pod::Parser>, L<spin(1)>
 
 Current versions of this program are available from my web tools page at
-L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
+L<https://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
 same page.
 
 =head1 AUTHOR
