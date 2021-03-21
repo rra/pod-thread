@@ -80,7 +80,6 @@ present:
 * Test::MinimumVersion
 * Test::Perl::Critic
 * Test::Pod
-* Test::Pod::Coverage
 * Test::Spelling
 * Test::Strict
 * Test::Synopsis
