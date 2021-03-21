@@ -4,8 +4,7 @@
 #
 # Copyright 2009, 2013 Russ Allbery <rra@cpan.org>
 #
-# This program is free software; you may redistribute it and/or modify it
-# under the same terms as Perl itself.
+# SPDX-License-Identifier: MIT
 
 use 5.008;
 use strict;

@@ -7,8 +7,7 @@
 #
 # Copyright 2013 Russ Allbery <rra@cpan.org>
 #
-# This program is free software; you may redistribute it and/or modify it
-# under the same terms as Perl itself.
+# SPDX-License-Identifier: MIT
 
 ##############################################################################
 # Modules and declarations
@@ -176,13 +175,6 @@ files to replace the version as described above.
 =head1 AUTHOR
 
 Russ Allbery <rra@cpan.org>.
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2013 Russ Allbery <rra@cpan.org>
-
-This program is free software; you may redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =head1 SEE ALSO
 

@@ -1,5 +1,9 @@
                      Revision history for Pod::Thread
 
+1.02 - unreleased
+
+ - Change the licensing to the Expat (MIT) license.
+
 1.01 - 2013-06-30
 
  - Remove single spaces at the start of lines in wrapped paragraphs.
