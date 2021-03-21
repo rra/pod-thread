@@ -23,7 +23,7 @@ my $build = Module::Build->new(
     configure_requires => { 'Module::Build' => 0.28 },
     requires           => {
         'Pod::Simple' => '3.06',
-        perl          => '5.008',
+        perl          => '5.012',
     },
 );
 
