@@ -10,9 +10,9 @@
 # Modules and declarations
 ##############################################################################
 
-package Pod::Thread;
+package Pod::Thread 1.02;
 
-use 5.010;
+use 5.012;
 use strict;
 use warnings;
 
@@ -21,8 +21,6 @@ use base qw(Pod::Simple);
 use Carp qw(croak);
 use Encode qw(encode);
 use Text::Wrap qw(wrap);
-
-our $VERSION = '0.0';
 
 ##############################################################################
 # Internal constants

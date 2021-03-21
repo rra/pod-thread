@@ -36,7 +36,7 @@ DESCRIPTION
 
 REQUIREMENTS
 
-  Perl 5.8 or later and Pod::Parser 3.06 or later.  As mentioned above,
+  Perl 5.12 or later and Pod::Parser 3.06 or later.  As mentioned above,
   it's also not particularly useful without spin.
 
 BUILDING AND INSTALLATION

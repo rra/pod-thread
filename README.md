@@ -40,8 +40,8 @@ navigation bar at the top of the generated file.
 
 ## Requirements
 
-Perl 5.8 or later and Pod::Parser 3.06 or later.  As mentioned above, it's
-also not particularly useful without spin.
+Perl 5.12 or later and Pod::Parser 3.06 or later.  As mentioned above,
+it's also not particularly useful without spin.
 
 ## Building and Installation
 
