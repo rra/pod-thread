@@ -974,14 +974,6 @@ configured output string or file handle.
 
 =back
 
-=head1 SEE ALSO
-
-L<Pod::Parser>, L<spin(1)>
-
-Current versions of this program are available from my web tools page at
-L<https://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
-same page.
-
 =head1 AUTHOR
 
 Russ Allbery <rra@cpan.org>, based heavily on Pod::Text from podlators.
@@ -1007,6 +999,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+=head1 SEE ALSO
+
+L<Pod::Parser>, L<spin(1)>
+
+This module is part of the Pod-Thread distribution.  The current version of
+Pod-Thread is available from CPAN, or directly from its web site at
+L<https://www.eyrie.org/~eagle/software/pod-thread/>.
+
+B<spin> is available from L<https://www.eyrie.org/~eagle/software/web/>.
 
 =cut
 
