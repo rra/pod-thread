@@ -26,19 +26,6 @@ use Text::Wrap qw(wrap);
 # Internal constants
 ##############################################################################
 
-# Include only the escapes that are basic ASCII or are not valid XHTML
-# escapes.
-my %ESCAPES = (
-    amp    => q{&},    # ampersand
-    apos   => q{'},    # apostrophe (')
-    lt     => q{<},    # left chevron, less-than
-    gt     => q{>},    # right chevron, greater-than
-    quot   => q{"},    # double quote (")
-    shy    => q{-},    # soft (discretionary) hyphen
-    sol    => q{/},    # solidus (forward slash)
-    verbar => q{|},    # vertical bar
-);
-
 # Regex matching a manpage-style entry in the NAME header.  $1 is set to the
 # list of things documented by the man page, and $2 is set to the description.
 my $NAME_REGEX = qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
