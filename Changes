@@ -2,6 +2,8 @@
 
 1.02 - unreleased
 
+ - Don't title-case words in section titles in the navbar that contain an
+   underscore.
  - Change the licensing to the Expat (MIT) license.
 
 1.01 - 2013-06-30

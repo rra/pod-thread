@@ -349,6 +349,23 @@ sub output_contents {
     return;
 }
 
+# Capitalize a heading for the navigation bar.  Normally we want to use
+# title case, but don't lowercase elements containing an underscore.
+#
+# $heading - The heading to capitalize
+#
+# Returns: The properly capitalized heading.
+sub _capitalize_for_navbar {
+    my ($self, $heading) = @_;
+    my @words = split(q{ }, $heading);
+    for my $word (@words) {
+        if ($word !~ m{ _ }xms) {
+            $word = ucfirst(lc($word));
+        }
+    }
+    return join(q{ }, @words);
+}
+
 # Output a navigation bar at the beginning of a document.  This is like a
 # table of contents, but lists the sections separated by vertical bars and
 # tries to limit the number of sections per line.  This is only done if the
@@ -396,7 +413,7 @@ sub output_navbar {
         }
 
         # Convert the section names to titlecase.
-        my $name = join(q{ }, map { ucfirst(lc) } split(q{ }, $section));
+        my $name = $self->_capitalize_for_navbar($section);
         $name =~ s{ \b And \b }{and}xmsg;
 
         # Add it to the current line.
