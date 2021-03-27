@@ -13,7 +13,7 @@ Some 0 item.
 =back
 
 [output]
-\h2[ITEM 0]
+\h2(#S1)[ITEM 0]
 
 \desc[0]
 [Some 0 item.

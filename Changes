@@ -1,9 +1,14 @@
                      Revision history for Pod::Thread
 
-1.02 - unreleased
+2.00 - unreleased
 
+ - Table of contents and navbar generation is now handled internally in
+   the Pod::Thread module rather than with a pre-scanning pass.  The
+   contents and navbar module constructor options are now simple booleans.
  - Don't title-case words in section titles in the navbar that contain an
    underscore.
+ - CVS Id strings are now honored if found anywhere in the document.
+ - Change documentation references from Pod::Parser to Pod::Simple.
  - Change the licensing to the Expat (MIT) license.
 
 1.01 - 2013-06-30

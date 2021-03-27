@@ -17,7 +17,7 @@ Second item.
 =back
 
 [output]
-\h2[Non-numeric =item]
+\h2(#S1)[Non-numeric =item]
 
 \desc[1]
 [First item.
