@@ -10,6 +10,7 @@
  - CVS Id strings are now honored if found anywhere in the document.
  - Change documentation references from Pod::Parser to Pod::Simple.
  - Change the licensing to the Expat (MIT) license.
+ - Require Perl 5.24 or later.
 
 1.01 - 2013-06-30
 

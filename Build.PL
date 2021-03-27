@@ -24,7 +24,7 @@ my $build = Module::Build->new(
     test_requires      => { 'Perl6::Slurp'  => 0 },
     requires           => {
         'Pod::Simple' => '3.06',
-        perl          => '5.012',
+        perl          => '5.024',
     },
 );
 

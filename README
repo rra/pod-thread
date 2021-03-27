@@ -1,4 +1,4 @@
-                             Pod::Thread 1.02
+                             Pod::Thread 2.00
          (Format POD source into thread, an HTML macro language)
                 Maintained by Russ Allbery <rra@cpan.org>
 
@@ -36,7 +36,7 @@ DESCRIPTION
 
 REQUIREMENTS
 
-  Perl 5.12 or later and Pod::Parser 3.06 or later.  As mentioned above,
+  Perl 5.24 or later and Pod::Parser 3.06 or later.  As mentioned above,
   it's also not particularly useful without spin.
 
 BUILDING AND INSTALLATION

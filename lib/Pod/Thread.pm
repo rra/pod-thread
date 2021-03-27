@@ -12,7 +12,7 @@
 
 package Pod::Thread 2.00;
 
-use 5.012;
+use 5.024;
 use strict;
 use warnings;
 
