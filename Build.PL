@@ -21,6 +21,7 @@ my $build = Module::Build->new(
 
     # Other package relationships.
     configure_requires => { 'Module::Build' => 0.28 },
+    test_requires      => { 'Perl6::Slurp'  => 0 },
     requires           => {
         'Pod::Simple' => '3.06',
         perl          => '5.012',

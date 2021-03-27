@@ -72,8 +72,8 @@ If a test fails, you can run a single test with verbose output via:
     ./Build test --test_files <path-to-test>
 ```
 
-The following additional Perl modules will be used by the test suite if
-present:
+Perl6::Slurp is required by the test suite.  The following additional Perl
+modules will be used by the test suite if present:
 
 * Devel::Cover
 * Perl::Critic::Freenode
