@@ -15,6 +15,7 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
     - Add Multi-Arch: foreign.
   * Update to debhelper compatibility level V13.
     - Depend on debhelper-compat instead of debhelper.
+  * Improve the package short description.
   * Update upstream homepage and email address.
   * Remove Bugs override now that this package is in Debian proper.
   * Add debian/gbp.conf file to configure branch and tag layout.
