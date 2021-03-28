@@ -4,32 +4,9 @@ Upstream-Name: Pod-Thread
 Upstream-Contact: Russ Allbery <rra@stanford.edu>
 
 Files: *
-Copyright: 2002, 2008-2009, 2013 Russ Allbery <rra@stanford.edu>
-License: Perl
- This program is free software; you may redistribute it and/or modify it
- under the same terms as Perl itself.  This means that you may choose
- between the two licenses that Perl is released under:  the GNU GPL and the
- Artistic License.  Please see your Perl distribution for the details and
- copies of the licenses.
-Comment: You can find the GPL version 1 in /usr/share/common-licenses/GPL-1
- and the Artistic License in /usr/share/common-licenses/Artistic on Debian
- systems.
-
-Files: t/critic.t t/minimum-version.t t/pod-spelling.t t/pod.t t/strict.t
- t/synopsis.t
-Copyright: no copyright notice, see License
-License: rra-public-domain
- The authors hereby relinquish any claim to any copyright that they may
- have in this work, whether granted under contract or by operation of law
- or international treaty, and hereby commit to the public, at large, that
- they shall not, at any time in the future, seek to enforce any copyright
- in this work against any person or entity, or prevent any person or
- entity from copying, publishing, distributing or creating derivative
- works of this work.
-
-Files: t/data/perlcriticrc
-Copyright: 2011-2013
-    The Board of Trustees of the Leland Stanford Junior University
+Copyright: 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>
+  2011-2014 The Board of Trustees of the Leland Stanford Junior University
+  2015-2016, 2018-2021 Russ Allbery <eagle@eyrie.org>
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the
@@ -49,4 +26,26 @@ License: Expat
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
  OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
  THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Files: t/data/perltidyrc t/data/snippets/README.md
+Copyright: 2012-2013
+    The Board of Trustees of the Leland Stanford Junior University
+  2015, 2018, 2021 Russ Allbery <rra@cpan.org>
+License: all-permissive
+ Copying and distribution of this file, with or without modification, are
+ permitted in any medium without royalty provided the copyright notice and
+ this notice are preserved.  This file is offered as-is, without any
+ warranty.
+
+Files: t/lib/Test/Snippets.pm
+Copyright: 2015-2016, 2018-2021 Russ Allbery <rra@cpan.org>
+License: Perl
+ This program is free software; you may redistribute it and/or modify it
+ under the same terms as Perl itself.  This means that you may choose
+ between the two licenses that Perl is released under:  the GNU GPL and the
+ Artistic License.  Please see your Perl distribution for the details and
+ copies of the licenses.
+Comment: You can find the GPL version 1 in /usr/share/common-licenses/GPL-1
+ and the Artistic License in /usr/share/common-licenses/Artistic on Debian
+ systems.
 
