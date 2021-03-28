@@ -16,6 +16,7 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
   * Update to debhelper compatibility level V13.
     - Depend on debhelper-compat instead of debhelper.
   * Improve the package short description.
+  * Add the module name to the package long description.
   * Install the upstream TODO file.
   * Add the upstream signing key as debian/upstream/signing-key.asc.
   * Add debian/upstream/metadata.

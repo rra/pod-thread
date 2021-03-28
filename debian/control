@@ -25,6 +25,7 @@ Depends:
  ${misc:Depends},
  ${perl:Depends},
 Description: Convert POD to thread, an HTML macro language
- Converts documentation in POD format to thread, a macro language used to
- generate HTML.  This module and the pod2thread program provided by this
- package are used by spin to handle formatting of POD documentation.
+ Pod::Thread converts documentation in POD format to thread, a macro
+ language used to generate HTML.  This module and the pod2thread program
+ provided by this package are used by spin to handle formatting of POD
+ documentation.
