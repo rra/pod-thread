@@ -2,35 +2,29 @@
 #
 # Build script for Pod::Thread distribution.
 #
-# Copyright 2002, 2013 Russ Allbery <rra@stanford.edu>
+# Copyright 2002, 2013, 2021 Russ Allbery <rra@cpan.org>
 #
-# This program is free software; you may redistribute it and/or modify it
-# under the same terms as Perl itself.
+# SPDX-License-Identifier: MIT
 
 use 5.008;
 use strict;
 use warnings;
 
-use lib 'tools/lib';
-
-use Module::Build::SetVersion;
+use Module::Build;
 
 # Basic package configuration.
-my $build = Module::Build::SetVersion->new(
+my $build = Module::Build->new(
     module_name          => 'Pod::Thread',
-    dist_abstract        => 'Convert POD data to thread HTML macro language',
-    dist_author          => 'Russ Allbery <rra@stanford.edu>',
-    dist_version         => '1.01',
-    license              => 'perl',
+    dist_author          => 'Russ Allbery <rra@cpan.org>',
+    license              => 'mit',
     recursive_test_files => 1,
-    create_makefile_pl   => 'traditional',
 
     # Other package relationships.
     configure_requires => { 'Module::Build' => 0.28 },
+    test_requires      => { 'Perl6::Slurp'  => 0 },
     requires           => {
-        'Pod::Simple' => 3.06,
-        'Readonly'    => 0,
-        perl          => '5.008',
+        'Pod::Simple' => '3.06',
+        perl          => '5.024',
     },
 );
 

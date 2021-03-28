@@ -4,13 +4,14 @@
 # for packages that run perlcritic tests automatically during the build for
 # reproducible test results.
 #
-# This file has been updated to match perlcritic 1.118.
+# This file has been updated to match perlcritic 1.134.
 #
 # The canonical version of this file is maintained in the rra-c-util package,
-# which can be found at <http://www.eyrie.org/~eagle/software/rra-c-util/>.
+# which can be found at <https://www.eyrie.org/~eagle/software/rra-c-util/>.
 #
-# Written by Russ Allbery <rra@stanford.edu>
-# Copyright 2011, 2012, 2013
+# Written by Russ Allbery <eagle@eyrie.org>
+# Copyright 2018-2020 Russ Allbery <eagle@eyrie.org>
+# Copyright 2011-2013
 #     The Board of Trustees of the Leland Stanford Junior University
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -30,6 +31,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
+#
+# SPDX-License-Identifier: MIT
 
 severity = 1
 verbose  = %f:%l:%c: [%p] %m (%e, Severity: %s)\n
@@ -38,6 +41,10 @@ verbose  = %f:%l:%c: [%p] %m (%e, Severity: %s)\n
 # Stanford really didn't like it, so this is my compromise to agree with a
 # group coding style.
 [-CodeLayout::ProhibitParensWithBuiltins]
+
+# This recommends using given/when, but Perl has marked those as experimental
+# and cautions against using when.
+[-ControlStructures::ProhibitCascadingIfElse]
 
 # Stanford's coding style allows postfix unless for flow control.  There
 # doesn't appear to be any way to allow it only for flow control (the logic
@@ -49,9 +56,6 @@ allow = unless
 # This is handled with a separate test case that uses Test::Spelling.
 [-Documentation::PodSpelling]
 
-# Pod::Man and Pod::Text fixed this bug years ago.  I know, I maintain them.
-[-Documentation::RequirePodLinksIncludeText]
-
 # The POD sections Perl::Critic wants are incompatible with the POD template
 # from perlpodstyle, which is what I use for my POD documentation.
 [-Documentation::RequirePodSections]
@@ -59,6 +63,12 @@ allow = unless
 # This problem was fixed in Perl 5.14, which now properly preserves the value
 # of $@ even if destructors run at exit from the eval block.
 [-ErrorHandling::RequireCheckingReturnValueOfEval]
+
+# This conflicts with Subroutines::ProhibitExplicitReturnUndef and
+# Subroutines::RequireFinalReturn, and I prefer the brevity of the simple
+# return statement.  I don't think the empty list versus undef behavior is
+# that confusing.
+[-Freenode::EmptyReturn]
 
 # The default of 9 is too small and forces weird code contortions.
 [InputOutput::RequireBriefOpen]
@@ -75,6 +85,10 @@ lines = 25
 # off.
 [-RegularExpressions::ProhibitComplexRegexes]
 
+# Produces false positives currently with postfix dereferencing (introduced in
+# Perl 5.20).  See https://github.com/Perl-Critic/Perl-Critic/issues/578.
+[-References::ProhibitDoubleSigils]
+
 # I generally don't want to require Readonly as a prerequisite for all my Perl
 # modules.
 [-ValuesAndExpressions::ProhibitConstantPragma]
@@ -89,9 +103,11 @@ lines = 25
 [ValuesAndExpressions::RequireNumberSeparators]
 min_value = 100000
 
+# IO::Uncompress::Gunzip puts the error message in a package variable.
 # Text::Wrap has a broken interface that requires use of package variables.
+# YAML::XS also cannot be configured without package variables.
 [Variables::ProhibitPackageVars]
-add_packages = Text::Wrap
+add_packages = IO::Uncompress::Gunzip Text::Wrap YAML::XS
 
 # use English was one of the worst ideas in the history of Perl.  It makes the
 # code slightly more readable for amateurs at the cost of confusing

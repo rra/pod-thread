@@ -1,21 +1,18 @@
-# Pod::Thread -- Convert POD data to the HTML macro language thread.
+# Convert POD data to the HTML macro language thread.
 #
 # This module converts POD to the HTML macro language thread.  It's intended
 # for use with the spin program to include POD documentation in a
 # spin-generated web page complex.
 #
-# Copyright 2002, 2008, 2009, 2013 Russ Allbery <rra@stanford.edu>
-#
-# This program is free software; you may redistribute it and/or modify it
-# under the same terms as Perl itself.
+# SPDX-License-Identifier: MIT
 
 ##############################################################################
 # Modules and declarations
 ##############################################################################
 
-package Pod::Thread;
+package Pod::Thread 2.00;
 
-use 5.008;
+use 5.024;
 use strict;
 use warnings;
 
@@ -23,37 +20,21 @@ use base qw(Pod::Simple);
 
 use Carp qw(croak);
 use Encode qw(encode);
-use Readonly;
 use Text::Wrap qw(wrap);
-
-our $VERSION = '0.0';
 
 ##############################################################################
 # Internal constants
 ##############################################################################
 
-# Include only the escapes that are basic ASCII or are not valid XHTML
-# escapes.
-Readonly my %ESCAPES => (
-    amp    => q{&},    # ampersand
-    apos   => q{'},    # apostrophe (')
-    lt     => q{<},    # left chevron, less-than
-    gt     => q{>},    # right chevron, greater-than
-    quot   => q{"},    # double quote (")
-    shy    => q{-},    # soft (discretionary) hyphen
-    sol    => q{/},    # solidus (forward slash)
-    verbar => q{|},    # vertical bar
-);
-
 # Regex matching a manpage-style entry in the NAME header.  $1 is set to the
 # list of things documented by the man page, and $2 is set to the description.
-Readonly my $NAME_REGEX => qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
+my $NAME_REGEX = qr{ \A ( \S+ (?:,\s*\S+)* ) [ ] - [ ] (.*) }xms;
 
 # Maximum length of each line when constructing a navbar.
-Readonly my $NAVBAR_LENGTH => 65;
+my $NAVBAR_LENGTH = 65;
 
 # Margin at which to wrap thread output.
-Readonly my $WRAP_MARGIN => 75;
+my $WRAP_MARGIN = 75;
 
 ##############################################################################
 # Initialization
@@ -61,8 +42,7 @@ Readonly my $WRAP_MARGIN => 75;
 
 # Called for every non-POD line in the file.  This is used to grab the Id
 # string (from a CVS or Subversion tag) if present in the file.  If we see
-# this before the start of the POD, we use it to generate a thread \id
-# command.
+# this, we use it to generate a thread \id command.
 #
 # $line   - The non-POD line
 # $number - The line number of the input file
@@ -105,19 +85,19 @@ sub new {
     # Preserve whitespace whenever possible to make debugging easier.
     $self->preserve_whitespace(1);
 
-    # Pod::Simple doesn't do anything useful with our arguments, but we want
-    # to put them in our object as hash keys and values.  This could cause
-    # problems if we ever clash with Pod::Simple's own internal class
-    # variables, so rename them with an opt_ prefix.
-    my @opts = map { ("opt_$_", $opts{$_}) } keys %opts;
-    %{$self} = (%{$self}, @opts);
-
     # Always send errors to standard error.
     $self->no_errata_section(1);
     $self->complain_stderr(1);
 
     # Look for Id strings in non-POD lines.
     $self->code_handler(\&handle_code);
+
+    # Pod::Simple doesn't do anything useful with our arguments, but we want
+    # to put them in our object as hash keys and values.  This could cause
+    # problems if we ever clash with Pod::Simple's own internal class
+    # variables, so rename them with an opt_ prefix.
+    my @opts = map { ("opt_$_", $opts{$_}) } keys %opts;
+    %{$self} = (%{$self}, @opts);
 
     return $self;
 }
@@ -228,6 +208,8 @@ sub _handle_element_end {
     } elsif ($self->can("end_$method")) {
         $method = 'end_' . $method;
         return $self->$method;
+    } else {
+        return;
     }
 }
 
@@ -291,11 +273,9 @@ sub output {
     # closing bracket at the start of the text.
     if ($self->{SPACE}) {
         if ($text =~ s{ \A \] \s* \n }{}xms) {
-            print { $self->{output_fh} } "]\n"
-              or die "Cannot write to output: $!\n";
+            $self->{OUTPUT} .= "]\n";
         }
-        print { $self->{output_fh} } $self->{SPACE}
-          or die "Cannot write to output: $!\n";
+        $self->{OUTPUT} .= $self->{SPACE};
         undef $self->{SPACE};
     }
 
@@ -304,14 +284,26 @@ sub output {
         $self->{SPACE} = $1;
     }
 
-    # Encode the output as needed.
-    if ($self->{ENCODE}) {
-        $text = encode('UTF-8', $text);
-    }
+    # Append the text to the output.
+    $self->{OUTPUT} .= $text;
+    return;
+}
 
-    # Output the text.
-    print { $self->{output_fh} } $text
+# Flush the output at the end of a document by sending it to the correct
+# output file handle.
+sub _flush_output {
+    my ($self) = @_;
+    my $output = $self->{OUTPUT};
+
+    # Encode if necessary and then output.
+    if ($self->{ENCODE}) {
+        $output = encode('UTF-8', $output);
+    }
+    print { $self->{output_fh} } $output
       or die "Cannot write to output: $!\n";
+
+    # Clear the output to avoid sending it twice.
+    $self->{OUTPUT} = q{};
     return;
 }
 
@@ -319,137 +311,141 @@ sub output {
 # Document start and finish
 ##############################################################################
 
-# From a hash of section names to tags, produce a sorted list of sections.
-# The tag must be numeric from the second character on, and the sections will
-# be sorted by the numeric tag.
-#
-# $self     - The Pod::Thread object
-# $sections - A hash of formatted section headings to tags
-#
-# Returns: A list formatted section headings
-sub sorted_sections {
-    my ($self, $sections) = @_;
-    my $by_tag = sub {
-        my $an = substr($sections->{$a}, 1);
-        my $bn = substr($sections->{$b}, 1);
-        return $an <=> $bn;
-    };
-    my @sorted = sort { $by_tag->() } keys %{$sections};
-    return @sorted;
-}
-
-# Output a table of contents at the beginning of a document if the contents
-# option is set.  If it is, it will be a map from the formatted contents of
-# headings to a tag to use for that heading.  The table of contents will be
-# presented in the sorted order of the tags.
+# Construct a table of contents from the headings seen throughout the
+# document.
 #
 # $self - The Pod::Thread object
 #
-# Returns: undef
-sub output_contents {
+# Returns: The thread code for the table of contents
+sub _contents {
     my ($self) = @_;
-    if (!$self->{opt_contents}) {
-        return;
-    }
+    return if !$self->{HEADINGS}->@*;
 
-    # Transform the sections into a sorted list of formatted headings.
-    my @sections = $self->sorted_sections($self->{opt_contents});
-
-    # Output the table of contents.
-    $self->output("\\h2[Table of Contents]\n\n");
-    for my $section (@sections) {
-        my $tag = $self->{opt_contents}{$section};
-        $self->output("\\number(packed)[\\link[#$tag][$section]]\n");
+    # Construct and return the table of contents.
+    my $output = "\\h2[Table of Contents]\n\n";
+    for my $i (0 .. $self->{HEADINGS}->$#*) {
+        my $tag     = 'S' . ($i + 1);
+        my $section = $self->{HEADINGS}[$i];
+        $output .= "\\number(packed)[\\link[#$tag][$section]]\n";
     }
-    $self->output("\n");
-    return;
+    $output .= "\n";
+    return $output;
 }
 
-# Output a navigation bar at the beginning of a document.  This is like a
-# table of contents, but lists the sections separated by vertical bars and
-# tries to limit the number of sections per line.  This is only done if the
-# navbar option is set.  If it is, it will be a map from the formatted
-# contents of headings to a tag to use for that heading, just like the
-# contents option.  The navbar will be presented in the sorted order of the
+# Capitalize a heading for the navigation bar.  Normally we want to use
+# title case, but don't lowercase elements containing an underscore.
+#
+# $heading - The heading to capitalize
+#
+# Returns: The properly capitalized heading.
+sub _capitalize_for_navbar {
+    my ($self, $heading) = @_;
+    my @words = split(q{ }, $heading);
+    for my $word (@words) {
+        if ($word !~ m{ _ }xms) {
+            $word = lc($word);
+            if ($word ne 'and') {
+                $word = ucfirst($word);
+            }
+        }
+    }
+    return join(q{ }, @words);
+}
+
+# Construct a navigation bar.  This is like a table of contents, but lists the
+# sections separated by vertical bars and tries to limit the number of
+# sections per line.  The navbar will be presented in the sorted order of the
 # tags.
 #
 # $self - The Pod::Thread object
 #
-# Returns: undef
-sub output_navbar {
+# Returns: The thread code for the navbar
+sub _navbar {
     my ($self) = @_;
-    if (!$self->{opt_navbar}) {
-        return;
-    }
+    return if !$self->{HEADINGS}->@*;
 
-    # Transform the sections into a sorted list of formatted headings.
-    my @sections = $self->sorted_sections($self->{opt_navbar});
-
-    # Output the start of the navbar.
-    $self->output("\\class(navbar)[\n  ");
+    # Build the start of the navbar.
+    my $output = "\\class(navbar)[\n  ";
 
     # Format the navigation bar, accumulating each line in $output.  Store the
     # formatted length in $length.  We can't use length($output) because that
     # would count all the thread commands.  This won't be quite right if
     # headings contain formatting.
-    my $output = q{};
-    my $length = 0;
-    for my $section (@sections) {
-        my $tag = $self->{opt_navbar}{$section};
+    my $pending = q{};
+    my $length  = 0;
+    for my $i (0 .. scalar($self->{HEADINGS}->$#*)) {
+        my $tag     = 'S' . ($i + 1);
+        my $section = $self->{HEADINGS}[$i];
 
         # If adding this section would put us over 60 characters, output the
         # current line with a line break.
         if ($length + length($section) > $NAVBAR_LENGTH) {
-            $self->output("$output\\break\n  ");
-            $output = q{};
-            $length = 0;
+            $output .= "$pending\\break\n  ";
+            $pending = q{};
+            $length  = 0;
         }
 
         # If this isn't the first thing on a line, add the separator.
-        if (length($output) != 0) {
-            $output .= q{  | };
+        if (length($pending) != 0) {
+            $pending .= q{  | };
             $length += length(q{ | });
         }
 
         # Convert the section names to titlecase.
-        my $name = join(q{ }, map { ucfirst(lc($_)) } split(q{ }, $section));
-        $name =~ s{ \b And \b }{and}xmsg;
+        my $name = $self->_capitalize_for_navbar($section);
 
         # Add it to the current line.
-        $output .= "\\link[#$tag][$name]\n";
+        $pending .= "\\link[#$tag][$name]\n";
         $length += length($name);
     }
 
-    # Output any remaining partial line and the end of the navbar.
-    if (length($output) > 0) {
-        $self->output($output);
+    # Collect any remaining partial line and the end of the navbar.
+    if (length($pending) > 0) {
+        $output .= $pending;
     }
-    $self->output("]\n\n");
-    return;
+    $output .= "]\n\n";
+    return $output;
 }
 
-# Print out the header and title of the document, including any navigation bar
+# Construct the header and title of the document, including any navigation bar
 # and contents section if we have any.
 #
 # $self       - Pod::Thread object
 # $title      - Document title
 # $subheading - Document subheading (may be undef)
 #
-# Returns: undef
-sub output_header {
-    my ($self, $title, $subheading) = @_;
-    my $style = $self->{opt_style} || q{};
+# Returns: The thread source for the document heading
+sub _header {
+    my ($self) = @_;
+    my $style  = $self->{opt_style} || q{};
+    my $output = q{};
+
+    # Handle the Id string if found.
     if ($self->{opt_id}) {
-        $self->output("\\id[$self->{opt_id}]\n\n");
+        $output .= "\\id[$self->{opt_id}]\n\n";
     }
-    $self->output("\\heading[$title][$style]\n\n");
-    $self->output("\\h1[$title]\n\n");
-    if (defined $subheading) {
-        $self->output("\\class(subhead)[($subheading)]\n\n");
+
+    # Add the basic title, page heading, and style if we saw a title.
+    if ($self->{TITLE}) {
+        $output .= "\\heading[$self->{TITLE}][$style]\n\n";
+        $output .= "\\h1[$self->{TITLE}]\n\n";
     }
-    $self->output_navbar;
-    $self->output_contents;
-    return;
+
+    # If there is a subheading, add it.
+    if (defined($self->{SUBHEADING})) {
+        $output .= "\\class(subhead)[($self->{SUBHEADING})]\n\n";
+    }
+
+    # If a navbar or table of contents was requested, add it.
+    if ($self->{opt_navbar}) {
+        $output .= $self->_navbar();
+    }
+    if ($self->{opt_contents}) {
+        $output .= $self->_contents();
+    }
+
+    # Return the results.
+    return $output;
 }
 
 # Handle the beginning of a POD file.  We only output something if title is
@@ -471,34 +467,33 @@ sub start_document {
     }
 
     # Initialize per-document variables.
+    $self->{HEADINGS}     = [];
     $self->{IN_NAME}      = 0;
     $self->{ITEM_OPEN}    = 0;
     $self->{ITEM_PENDING} = 0;
     $self->{ITEMS}        = [];
+    $self->{OUTPUT}       = q{};
     $self->{PENDING}      = [[]];
+    $self->{SUBHEADING}   = undef;
+    $self->{TITLE}        = $self->{opt_title} // q{};
 
     # Check whether our output file handle already has a PerlIO encoding layer
-    # set.  If it does not, we'll need to encode our output before printing it
-    # (handled in the output method).  Wrap the check in an eval to handle
-    # versions of Perl without PerlIO.
+    # set.  If it does not, we'll need to encode our output before printing
+    # it.  Wrap the check in an eval to handle versions of Perl without
+    # PerlIO.
     $self->{ENCODE} = 1;
     eval {
         my @options = (output => 1, details => 1);
-        my $flag = (PerlIO::get_layers($self->{output_fh}, @options))[-1];
-        if (defined($flag) && ($flag & PerlIO::F_UTF8())) {
+        my @layers  = PerlIO::get_layers($self->{output_fh}->**, @options);
+        if ($layers[-1] && ($layers[-1] & PerlIO::F_UTF8())) {
             $self->{ENCODE} = 0;
         }
     };
-
-    # If there was a title option, handle it now.
-    if ($self->{opt_title}) {
-        $self->output_header($self->{opt_title});
-    }
     return;
 }
 
-# Handle the end of the document.  Tack \signature onto the end, and then die
-# if we saw any errors.
+# Handle the end of the document.  Tack \signature onto the end, die if we saw
+# any errors, and otherwise output the header and the accumulated output.
 #
 # $self - Pod::Thread object
 #
@@ -509,6 +504,17 @@ sub end_document {
     if ($self->errors_seen) {
         croak('POD document had syntax errors');
     }
+
+    # Output the header.
+    my $header = $self->_header();
+    if ($self->{ENCODE}) {
+        $header = encode('UTF-8', $header);
+    }
+    print { $self->{output_fh} } $header
+      or die "Cannot write to output: $!\n";
+
+    # Flush the rest of the output.
+    $self->_flush_output();
     return;
 }
 
@@ -564,6 +570,11 @@ sub item {
 sub cmd_para {
     my ($self, $attrs, $text) = @_;
 
+    # Check for an Id tag and, if found, remember it.
+    if (!$self->{opt_id} && $text =~ m{ (\$ Id: .* \$) }xms) {
+        $self->{opt_id} = $1;
+    }
+
     # Ensure the text block ends with a single newline.
     $text =~ s{ \s+ \z }{\n}xms;
 
@@ -573,11 +584,11 @@ sub cmd_para {
     }
 
     # If we're in the NAME section and see a line that looks like the special
-    # NAME section of a man page, that's our cue to print out the page
-    # heading.
+    # NAME section of a man page, stash that information for the page heading.
     elsif ($self->{IN_NAME} && $text =~ $NAME_REGEX) {
         my ($name, $description) = ($1, $2);
-        $self->output_header($name, $description);
+        $self->{TITLE}      = $name;
+        $self->{SUBHEADING} = $description;
     }
 
     # Otherwise, this is a regular text block, so just output it with a
@@ -602,6 +613,11 @@ sub cmd_verbatim {
     # Ignore empty verbatim paragraphs.
     if ($text =~ m{ \A \s* \z }xms) {
         return;
+    }
+
+    # Check for an Id tag and, if found, remember it.
+    if (!$self->{opt_id} && $text =~ m{ (\$ Id: .* \$) }xms) {
+        $self->{opt_id} = $1;
     }
 
     # Ensure the paragraph ends in a bracket and two newlines.
@@ -684,19 +700,15 @@ sub cmd_head1 {
         $self->{IN_NAME} = 1;
         return;
     }
-
-    # Not in the name section.  See if we have section information, and if so,
-    # add a tag to the header.  We have to strip any embedded markup from the
-    # section text.
     $self->{IN_NAME} = 0;
-    my $sections = $self->{opt_contents} || $self->{opt_navbar};
+
+    # Not in the name section.  Record the heading and a tag to the header.
+    # We have to strip any embedded markup from the section text.
     my $section = $text;
     $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
-    if ($sections && $sections->{$section}) {
-        return $self->heading($text, 2, "#$sections->{$section}");
-    } else {
-        return $self->heading($text, 2);
-    }
+    push($self->{HEADINGS}->@*, $section);
+    my $tag = 'S' . scalar($self->{HEADINGS}->@*);
+    return $self->heading($text, 2, "#$tag");
 }
 
 # All the other headings, which just hand off to the heading method.
@@ -885,7 +897,8 @@ sub cmd_l {
 __END__
 
 =for stopwords
-Allbery CVS STDIN STDOUT navbar podlators
+Allbery CVS STDIN STDOUT navbar podlators MERCHANTABILITY NONINFRINGEMENT
+sublicense
 
 =head1 NAME
 
@@ -909,44 +922,31 @@ Pod::Thread is a module that can convert documentation in the POD format
 language.  It lets the converter from thread to HTML handle some of the
 annoying parts of conversion to HTML.
 
-As a derived class from Pod::Parser, Pod::Thread supports the same methods
-and interfaces.  See L<Pod::Parser> for all the details; briefly, one
-creates a new parser with C<< Pod::Thread->new() >> and then calls either
-parse_from_filehandle() or parse_from_file().
+As a derived class from Pod::Simple, Pod::Thread supports the same methods and
+interfaces.  See L<Pod::Simple> for all the details; briefly, one creates a
+new parser with C<< Pod::Thread->new() >>, sets the output destination with
+either output_fh() or output_string(), and then calls one of parse_file(),
+parse_string_document(), or parse_lines().
 
-new() can take options, in the form of key/value pairs that control the
-behavior of the parser.  See below for details.
-
-The standard Pod::Parser method parse_from_filehandle() takes up to two
-arguments, the first being the file handle to read POD from and the second
-being the file handle to write the formatted output to.  The first defaults
-to STDIN if not given, and the second defaults to STDOUT.  The method
-parse_from_file() is almost identical, except that its two arguments are the
-input and output disk files instead.  See L<Pod::Parser> for the specific
-details.
-
-The recognized options to new() are as follows.  All options take a single
-argument.
+new() can take the following options, in the form of key/value pairs, to
+control the behavior of the formatter:
 
 =over 4
 
 =item contents
 
-Asks for a table of contents section at the beginning of the document.
-Should be set to a hash table mapping section headers to section numbers
-prefixed by S (for internal links).
+If set to a true value, output a table of contents section at the beginning of
+the document.  Only top-level headings will be shown.
 
 =item id
 
 Sets the CVS Id string for the file.  If this isn't set, Pod::Thread will
-try to find it in the file, but will only successfully find it if it occurs
-before the beginning of any POD in the input file.
+try to find it in the file.
 
 =item navbar
 
-Asks for a navigation bar at the beginning of the document.  Should be set
-to a hash table mapping section headers to section numbers prefixed by S
-(for internal links).
+If set to a true value, output a navigation bar at the beginning of the
+document with links to all top-level headings.
 
 =item style
 
@@ -976,23 +976,44 @@ configured output string or file handle.
 
 =back
 
-=head1 SEE ALSO
-
-L<Pod::Parser>, L<spin(1)>
-
-Current versions of this program are available from my web tools page at
-L<http://www.eyrie.org/~eagle/software/web/>.  B<spin> is available from the
-same page.
-
 =head1 AUTHOR
 
-Russ Allbery <rra@stanford.edu>, based heavily on Pod::Text from podlators.
+Russ Allbery <rra@cpan.org>, based heavily on Pod::Text from podlators.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002, 2008, 2009, 2013 Russ Allbery <rra@stanford.edu>
+Copyright 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>
 
-This program is free software; you may redistribute it and/or modify it
-under the same terms as Perl itself.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=head1 SEE ALSO
+
+L<Pod::Simple>, L<spin(1)>
+
+This module is part of the Pod-Thread distribution.  The current version of
+Pod-Thread is available from CPAN, or directly from its web site at
+L<https://www.eyrie.org/~eagle/software/pod-thread/>.
+
+B<spin> is available from L<https://www.eyrie.org/~eagle/software/web/>.
 
 =cut
+
+# Local Variables:
+# copyright-at-end-flag: t
+# End:

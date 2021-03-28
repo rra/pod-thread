@@ -1,14 +1,11 @@
 #!/usr/bin/perl
 #
-# Check for spelling errors in POD documentation.
+# Check Changes file for compliance with CPAN::Changes::Spec.
 #
 # The canonical version of this file is maintained in the rra-c-util package,
 # which can be found at <https://www.eyrie.org/~eagle/software/rra-c-util/>.
 #
-# Written by Russ Allbery <eagle@eyrie.org>
-# Copyright 2019 Russ Allbery <eagle@eyrie.org>
-# Copyright 2013-2014
-#     The Board of Trustees of the Leland Stanford Junior University
+# Copyright 2021 Russ Allbery <eagle@eyrie.org>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -36,35 +33,15 @@ use warnings;
 
 use lib 't/lib';
 
-use Test::RRA qw(skip_unless_author use_prereq);
+use Test::RRA qw(skip_unless_automated use_prereq);
 
 use Test::More;
 
-# Only run this test for the module author since the required stopwords are
-# too sensitive to the exact spell-checking program and dictionary.
-skip_unless_author('Spelling tests');
+# Skip this test for normal user installs.
+skip_unless_automated('Changes format tests');
 
 # Load prerequisite modules.
-use_prereq('Test::Spelling');
+use_prereq('Test::CPAN::Changes');
 
-# Check all POD in the Perl distribution.  Add the examples directory if it
-# exists.  Also add any files in usr/bin or usr/sbin, which are widely used in
-# Stanford-internal packages.
-my @files = all_pod_files();
-if (-d 'examples') {
-    push(@files, all_pod_files('examples'));
-}
-for my $dir (qw(usr/bin usr/sbin)) {
-    if (-d $dir) {
-        push(@files, glob("$dir/*"));
-    }
-}
-
-# We now have a list of all files to check, so output a plan and run the
-# tests.  We can't use all_pod_files_spelling_ok because it refuses to check
-# non-Perl files and Stanford-internal packages have a lot of shell scripts
-# with POD documentation.
-plan tests => scalar(@files);
-for my $file (@files) {
-    pod_file_spelling_ok($file);
-}
+# Run the tests.
+changes_ok();
