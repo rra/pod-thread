@@ -7,6 +7,11 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
       an underscore.
     - CVS Id strings are now honored if found anywhere in the document.
     - Change the licensing to Expat (MIT).
+  * Update standards version to 4.5.1.
+    - Update URL of Debian copyright format.
+    - Change priority to optional from extra.
+    - Add Rules-Requires-Root: no.
+    - Add Multi-Arch: foreign.
   * Update to debhelper compatibility level V13.
     - Depend on debhelper-compat instead of debhelper.
   * Update upstream homepage and email address.
