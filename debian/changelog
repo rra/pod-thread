@@ -7,6 +7,8 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
       an underscore.
     - CVS Id strings are now honored if found anywhere in the document.
     - Change the licensing to Expat (MIT).
+  * Update to debhelper compatibility level V13.
+    - Depend on debhelper-compat instead of debhelper.
   * Add debian/gbp.conf file to configure branch and tag layout.
   * Run wrap-and-sort -ast.
 
