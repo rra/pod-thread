@@ -1,5 +1,6 @@
 libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
 
+  * Upload to Debian.  (Closes: #986026)
   * New upstream release.
     - Table of contents and navbar generation are now handled internally
       in the module.
