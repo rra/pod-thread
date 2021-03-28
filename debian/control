@@ -3,8 +3,9 @@ Section: perl
 Priority: extra
 Build-Depends:
  debhelper-compat (= 13),
- libperl-critic-perl,
- libreadonly-perl,
+ libdevel-cover-perl,
+ libmodule-build-perl,
+ libperl6-slurp-perl,
  libtest-minimumversion-perl,
  libtest-pod-perl,
  libtest-strict-perl,
@@ -20,7 +21,6 @@ Vcs-Browser: http://git.eyrie.org/?p=web/pod-thread.git
 Package: libpod-thread-perl
 Architecture: all
 Depends:
- libreadonly-perl,
  ${misc:Depends},
  ${perl:Depends},
 Description: Perl module to convert POD to thread
