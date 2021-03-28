@@ -1,9 +1,15 @@
 Source: libpod-thread-perl
 Section: perl
 Priority: extra
-Build-Depends: debhelper (>= 9), libperl-critic-perl, libreadonly-perl,
- libtest-minimumversion-perl, libtest-pod-perl, libtest-strict-perl,
- libtest-synopsis-perl, perl
+Build-Depends:
+ debhelper (>= 9),
+ libperl-critic-perl,
+ libreadonly-perl,
+ libtest-minimumversion-perl,
+ libtest-pod-perl,
+ libtest-strict-perl,
+ libtest-synopsis-perl,
+ perl,
 Maintainer: Russ Allbery <rra@debian.org>
 Bugs: mailto:rra@debian.org
 Standards-Version: 3.9.4
@@ -13,7 +19,10 @@ Vcs-Browser: http://git.eyrie.org/?p=web/pod-thread.git
 
 Package: libpod-thread-perl
 Architecture: all
-Depends: ${perl:Depends}, ${misc:Depends}, libreadonly-perl
+Depends:
+ libreadonly-perl,
+ ${misc:Depends},
+ ${perl:Depends},
 Description: Perl module to convert POD to thread
  Converts documentation in POD format to thread, a macro language used to
  generate HTML.  This module and the pod2thread program provided by this
