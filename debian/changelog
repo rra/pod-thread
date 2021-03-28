@@ -18,6 +18,8 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
   * Improve the package short description.
   * Add the module name to the package long description.
   * Install the upstream TODO file.
+  * Fix the package URL in debian/watch and enable signature verification.
+  * Update debian/watch to version 4.
   * Add the upstream signing key as debian/upstream/signing-key.asc.
   * Add debian/upstream/metadata.
   * Update upstream homepage and email address.
