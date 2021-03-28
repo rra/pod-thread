@@ -9,6 +9,7 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
     - Change the licensing to Expat (MIT).
   * Move the canonical packaging repository to Salsa.
   * Enable automated tests during the package build.
+  * Enable autopkgtest Perl module tests.
   * Update standards version to 4.5.1.
     - Update URL of Debian copyright format.
     - Change priority to optional from extra.

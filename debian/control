@@ -12,6 +12,7 @@ Build-Depends:
  libtest-synopsis-perl,
  perl,
 Rules-Requires-Root: no
+Testsuite: autopkgtest-pkg-perl
 Maintainer: Russ Allbery <rra@debian.org>
 Standards-Version: 4.5.1
 Homepage: https://www.eyrie.org/~eagle/software/pod-thread/
