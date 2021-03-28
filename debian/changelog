@@ -9,6 +9,7 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
     - Change the licensing to Expat (MIT).
   * Update to debhelper compatibility level V13.
     - Depend on debhelper-compat instead of debhelper.
+  * Update upstream homepage and email address.
   * Add debian/gbp.conf file to configure branch and tag layout.
   * Run wrap-and-sort -ast.
 

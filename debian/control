@@ -14,7 +14,7 @@ Build-Depends:
 Maintainer: Russ Allbery <rra@debian.org>
 Bugs: mailto:rra@debian.org
 Standards-Version: 3.9.4
-Homepage: http://www.eyrie.org/~eagle/software/web/
+Homepage: https://www.eyrie.org/~eagle/software/pod-thread/
 Vcs-Git: git://git.eyrie.org/web/pod-thread.git -b debian
 Vcs-Browser: http://git.eyrie.org/?p=web/pod-thread.git
 

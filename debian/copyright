@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: http://www.eyrie.org/~eagle/software/web/
+Source: https://www.eyrie.org/~eagle/software/pod-thread/
 Upstream-Name: Pod-Thread
-Upstream-Contact: Russ Allbery <rra@stanford.edu>
+Upstream-Contact: Russ Allbery <rra@cpan.org>
 
 Files: *
 Copyright: 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>
