@@ -13,7 +13,6 @@ Build-Depends:
  perl,
 Rules-Requires-Root: no
 Maintainer: Russ Allbery <rra@debian.org>
-Bugs: mailto:rra@debian.org
 Standards-Version: 4.5.1
 Homepage: https://www.eyrie.org/~eagle/software/pod-thread/
 Vcs-Git: https://salsa.debian.org/rra/libpod-thread-perl.git
