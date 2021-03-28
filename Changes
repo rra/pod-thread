@@ -1,6 +1,6 @@
                      Revision history for Pod::Thread
 
-2.00 - Not Released
+2.00 - 2021-03-28
 
  - Table of contents and navbar generation is now handled internally in
    the Pod::Thread module rather than with a pre-scanning pass.  The

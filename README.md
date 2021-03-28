@@ -5,8 +5,6 @@ status](https://github.com/rra/pod-thread/workflows/build/badge.svg)](https://gi
 [![CPAN
 version](https://img.shields.io/cpan/v/Pod-Thread)](https://metacpan.org/release/Pod-Thread)
 [![License](https://img.shields.io/cpan/l/Pod-Thread)](https://github.com/rra/pod-thread/blob/master/LICENSE)
-[![Debian
-package](https://img.shields.io/debian/v/libpod-thread-perl/unstable)](https://tracker.debian.org/pkg/libpod-thread-perl)
 
 Copyright 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>.  This
 software is distributed under a BSD-style license.  Please see the section
