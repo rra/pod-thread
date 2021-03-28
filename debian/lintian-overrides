@@ -1,0 +1,4 @@
+# pod2thread is a small wrapper around the module and users are more likely to
+# look for the module by name than for the wrapper program.
+libpod-thread-perl: application-in-library-section perl usr/bin/pod2thread
+libpod-thread-perl: library-package-name-for-application usr/bin/pod2thread

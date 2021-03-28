@@ -26,6 +26,7 @@ libpod-thread-perl (2.00-1) UNRELEASED; urgency=medium
   * Remove Bugs override now that this package is in Debian proper.
   * Add debian/gbp.conf file to configure branch and tag layout.
   * Run wrap-and-sort -ast.
+  * Override Lintian tags complaining about the pod2thread program.
 
  -- Russ Allbery <rra@debian.org>  Sat, 27 Mar 2021 23:04:11 -0700
 
