@@ -2,15 +2,12 @@
 #
 # Test Perl code for test coverage.
 #
-# Test coverage checking is disabled unless RRA_MAINTAINER_TESTS is set since
-# it takes a long time, is sensitive to the versions of various libraries,
-# and will not interfere with functionality.
-#
 # The canonical version of this file is maintained in the rra-c-util package,
-# which can be found at <http://www.eyrie.org/~eagle/software/rra-c-util/>.
+# which can be found at <https://www.eyrie.org/~eagle/software/rra-c-util/>.
 #
-# Written by Russ Allbery <rra@stanford.edu>
-# Copyright 2013
+# Written by Russ Allbery <eagle@eyrie.org>
+# Copyright 2019-2020 Russ Allbery <eagle@eyrie.org>
+# Copyright 2013-2014
 #     The Board of Trustees of the Leland Stanford Junior University
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -30,30 +27,35 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
+#
+# SPDX-License-Identifier: MIT
 
-use 5.006;
+use 5.008;
 use strict;
 use warnings;
 
 use lib 't/lib';
 
-use File::Spec;
-use Test::More;
-use Test::RRA qw(skip_unless_maintainer use_prereq);
+use Test::RRA qw(skip_unless_author use_prereq);
 use Test::RRA::Config qw($COVERAGE_LEVEL @COVERAGE_SKIP_TESTS);
 
-# Skip code coverage unless doing maintainer testing.
-skip_unless_maintainer('Coverage testing');
+use File::Spec;
+use Test::More;
 
-# Load required modules.
+# Skip code coverage unless author tests are enabled since it takes a long
+# time, is sensitive to versions of various libraries, and does not detect
+# functionality problems.
+skip_unless_author('Coverage tests');
+
+# Load prerequisite modules.
 use_prereq('Devel::Cover');
 use_prereq('Test::Strict');
 
 # Build a list of test directories to use for coverage.
-my %ignore = map { $_ => 1 } qw(docs style), @COVERAGE_SKIP_TESTS;
-opendir(my $testdir, 't') or BAIL_OUT("cannot open t: $!");
+my %ignore = map { $_ => 1 } qw(data docs style), @COVERAGE_SKIP_TESTS;
+opendir(my $testdir, 't')      or BAIL_OUT("cannot open t: $!");
 my @t_dirs = readdir($testdir) or BAIL_OUT("cannot read t: $!");
-closedir($testdir) or BAIL_OUT("cannot close t: $!");
+closedir($testdir)             or BAIL_OUT("cannot close t: $!");
 
 # Filter out ignored and system directories.
 @t_dirs = grep { !$ignore{$_} } File::Spec->no_upwards(@t_dirs);
