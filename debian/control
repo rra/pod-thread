@@ -3,7 +3,6 @@ Section: perl
 Priority: optional
 Build-Depends:
  debhelper-compat (= 13),
- libdevel-cover-perl,
  libmodule-build-perl,
  libperl6-slurp-perl,
  libtest-minimumversion-perl,
