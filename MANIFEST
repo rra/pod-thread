@@ -1,5 +1,3 @@
-.github/dependabot.yml
-.github/workflows/build.yaml
 .gitignore
 bin/pod2thread
 Build.PL
@@ -15,10 +13,12 @@ README.md
 t/data/perl.conf
 t/data/perlcriticrc
 t/data/perltidyrc
+t/data/snippets/internal-links
 t/data/snippets/item-with-z
 t/data/snippets/item-zero
 t/data/snippets/navbar-contents
 t/data/snippets/navbar-underscore
+t/data/snippets/pod-errors
 t/data/snippets/README.md
 t/data/snippets/url
 t/docs/changes.t
