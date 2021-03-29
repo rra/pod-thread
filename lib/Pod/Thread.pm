@@ -22,6 +22,10 @@ use Carp qw(croak);
 use Encode qw(encode);
 use Text::Wrap qw(wrap);
 
+# Pod::Simple uses subroutines named as if they're private for subclassing,
+# and we dynamically construct method names on the fly.
+## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
+
 ##############################################################################
 # Internal constants
 ##############################################################################
@@ -49,7 +53,7 @@ my $WRAP_MARGIN = 75;
 # $parser - The Pod::Thread parser
 #
 # Returns: undef
-sub handle_code {
+sub _handle_code {
     my ($line, $line_number, $self) = @_;
     if (!$self->{opt_id} && $line =~ m{ (\$ Id: .* \$) }xms) {
         $self->{opt_id} = $1;
@@ -64,8 +68,7 @@ sub handle_code {
 # arguments.  User options are rewritten to start with opt_ to avoid conflicts
 # with Pod::Simple.
 #
-# $class - Our class as passed to the constructor
-# %opts  - Our options as key/value pairs
+# %opts - Our options as key/value pairs
 #
 # Returns: Newly constructed Pod::Thread object
 #  Throws: Whatever Pod::Simple's constructor might throw
@@ -90,7 +93,7 @@ sub new {
     $self->complain_stderr(1);
 
     # Look for Id strings in non-POD lines.
-    $self->code_handler(\&handle_code);
+    $self->code_handler(\&_handle_code);
 
     # Pod::Simple doesn't do anything useful with our arguments, but we want
     # to put them in our object as hash keys and values.  This could cause
@@ -120,16 +123,10 @@ sub new {
 # represented by a tuple of the attributes hash for the tag and the contents
 # of the tag.
 
-# Pod::Simple uses subroutines named as if they're private for subclassing.
-## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
-
 # Add a block of text to the contents of the current node, protecting any
 # thread metacharacters as we do.
 #
-# $self - Pod::Thread object
 # $text - A block of ordinary text seen in the POD
-#
-# Returns: undef
 sub _handle_text {
     my ($self, $text) = @_;
     $text =~ s{ \\ }{\\\\}xmsg;
@@ -142,11 +139,10 @@ sub _handle_text {
 # Given an element name, get the corresponding portion of a method name.  The
 # real methods will be formed by prepending cmd_, start_, or end_.
 #
-# $self    - Pod::Thread object.
 # $element - Name of the POD element by Pod::Simple's naming scheme.
 #
 # Returns: The element transformed into part of a method name.
-sub method_for_element {
+sub _method_for_element {
     my ($self, $element) = @_;
     $element =~ tr{-}{_};
     $element =~ tr{A-Z}{a-z};
@@ -159,21 +155,18 @@ sub method_for_element {
 # element method, and create a new tree into which we'll collect blocks of
 # text and nested elements.  Otherwise, if start_element is defined, call it.
 #
-# $self    - Pod::Thread object
 # $element - The name of the POD element that was started
 # $attrs   - The attribute hash for that POD element.
-#
-# Returns: undef
 sub _handle_element_start {
     my ($self, $element, $attrs) = @_;
-    my $method = $self->method_for_element($element);
+    my $method = $self->_method_for_element($element);
 
     # If we have a command handler, we need to accumulate the contents of the
     # tag before calling it.  If we have a start handler, call it immediately.
-    if ($self->can("cmd_$method")) {
-        push(@{ $self->{PENDING} }, [$attrs, q{}]);
-    } elsif ($self->can("start_$method")) {
-        $method = 'start_' . $method;
+    if ($self->can("_cmd_$method")) {
+        push($self->{PENDING}->@*, [$attrs, q{}]);
+    } elsif ($self->can("_start_$method")) {
+        $method = '_start_' . $method;
         $self->$method($attrs, q{});
     }
     return;
@@ -182,39 +175,38 @@ sub _handle_element_start {
 # Handle the end of an element.  If we had a cmd_ method for this element,
 # this is where we pass along the text that we've accumulated.  Otherwise, if
 # we have an end_ method for the element, call that.
+#
+# $element - The name of the POD element that was started
 sub _handle_element_end {
     my ($self, $element) = @_;
-    my $method = $self->method_for_element($element);
+    my $method = $self->_method_for_element($element);
 
     # If we have a command handler, pull off the pending text and pass it to
     # the handler along with the saved attribute hash.  Otherwise, if we have
     # an end method, call it.
-    if ($self->can("cmd_$method")) {
-        my $tag = pop @{ $self->{PENDING} };
-        $method = 'cmd_' . $method;
-        my $text = $self->$method(@{$tag});
+    if ($self->can("_cmd_$method")) {
+        my $tag_ref = pop($self->{PENDING}->@*);
+        $method = '_cmd_' . $method;
+        my $text = $self->$method($tag_ref->@*);
 
         # If the command returned some text, check if the element stack is
         # non-empty.  If so, add that text to the next open element.
         # Otherwise, we're at the top level and can output the text directly.
-        if (defined $text) {
-            if (@{ $self->{PENDING} } > 1) {
+        if (defined($text)) {
+            if ($self->{PENDING}->@* > 1) {
                 $self->{PENDING}[-1][1] .= $text;
             } else {
                 $self->output($text);
             }
         }
         return;
-    } elsif ($self->can("end_$method")) {
-        $method = 'end_' . $method;
-        return $self->$method;
+    } elsif ($self->can("_end_$method")) {
+        $method = '_end_' . $method;
+        return $self->$method();
     } else {
         return;
     }
 }
-
-# Private subroutines from here on out actually are.
-## use critic
 
 ##############################################################################
 # Output formatting
@@ -224,11 +216,10 @@ sub _handle_element_end {
 # for thread output since thread is not sensitive to long lines, but it makes
 # the output more readable.
 #
-# $self - Pod::Thread object
 # $text - Text to wrap
 #
 # Returns: Wrapped text
-sub reformat {
+sub _reformat {
     my ($self, $text) = @_;
 
     # Strip trailing whitespace.
@@ -255,18 +246,14 @@ sub reformat {
     return $output;
 }
 
-# Output text to the output device.  Force the encoding to UTF-8 unless we've
-# found that we already have a UTF-8 encoding layer.  We may have some
-# accumulated whitespace in the SPACE internal variable; if so, add that after
-# any closing bracket at the start of our output.  Then, save any whitespace
-# at the end of our output and defer it for next time.  (This creates much
-# nicer association of closing brackets.)
+# Accumulate output text.  We may have some accumulated whitespace in the
+# SPACE internal variable; if so, add that after any closing bracket at the
+# start of our output.  Then, save any whitespace at the end of our output and
+# defer it for next time.  (This creates much nicer association of closing
+# brackets.)
 #
-# $self - Pod::Thread object
 # $text - Text to output
-#
-# Returns: undef
-sub output {
+sub _output {
     my ($self, $text) = @_;
 
     # If we have deferred whitespace, output it before the text, but after any
@@ -290,7 +277,8 @@ sub output {
 }
 
 # Flush the output at the end of a document by sending it to the correct
-# output file handle.
+# output file handle.  Force the encoding to UTF-8 unless we've found that we
+# already have a UTF-8 encoding layer.
 sub _flush_output {
     my ($self) = @_;
     my $output = $self->{OUTPUT};
@@ -313,8 +301,6 @@ sub _flush_output {
 
 # Construct a table of contents from the headings seen throughout the
 # document.
-#
-# $self - The Pod::Thread object
 #
 # Returns: The thread code for the table of contents
 sub _contents {
@@ -356,8 +342,6 @@ sub _capitalize_for_navbar {
 # sections separated by vertical bars and tries to limit the number of
 # sections per line.  The navbar will be presented in the sorted order of the
 # tags.
-#
-# $self - The Pod::Thread object
 #
 # Returns: The thread code for the navbar
 sub _navbar {
@@ -410,7 +394,6 @@ sub _navbar {
 # Construct the header and title of the document, including any navigation bar
 # and contents section if we have any.
 #
-# $self       - Pod::Thread object
 # $title      - Document title
 # $subheading - Document subheading (may be undef)
 #
@@ -452,11 +435,8 @@ sub _header {
 # set, in which case we output the title and other header information at the
 # beginning of the resulting output file.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes of the start document tag
-#
-# Returns: undef
-sub start_document {
+sub _start_document {
     my ($self, $attrs) = @_;
 
     # If the document has no content, set the appropriate internal flag.
@@ -492,18 +472,27 @@ sub start_document {
     return;
 }
 
-# Handle the end of the document.  Tack \signature onto the end, die if we saw
-# any errors, and otherwise output the header and the accumulated output.
+# Handle the end of the document.  Tack \signature onto the end, output the
+# header and the accumulated output, and die if we saw any errors.
 #
-# $self - Pod::Thread object
-#
-# Returns: undef
-sub end_document {
+# Throws: Text exception if there were any errata
+sub _end_document {
     my ($self) = @_;
-    $self->output("\\signature\n");
-    if ($self->errors_seen) {
-        croak('POD document had syntax errors');
-    }
+
+    # Output the \signature command.
+    $self->_output("\\signature\n");
+
+    # Search for any unresolved links and try to fix their anchors.  If we
+    # never saw the heading in question, remove the \link command.
+    my $i        = 1;
+    my %headings = map { $_ => $i++ } $self->{HEADINGS}->@*;
+    $self->{OUTPUT} =~ s{ \\link \[\#PLACEHOLDER\] \[ ([^\]]+) \] }{
+        if (defined($headings{$1})) {
+            "\\link[#S$headings{$1}][$1]";
+        } else {
+            $1;
+        }
+    }xmsge;
 
     # Output the header.
     my $header = $self->_header();
@@ -515,6 +504,11 @@ sub end_document {
 
     # Flush the rest of the output.
     $self->_flush_output();
+
+    # Die if we saw any errors.
+    if ($self->any_errata_seen()) {
+        croak('POD document had syntax errors');
+    }
     return;
 }
 
@@ -528,30 +522,26 @@ sub end_document {
 # of the ITEMS stack will hold the command that should be used to open the
 # item block in thread.
 #
-# $self - Pod::Thread object
 # $text - Contents of the text block inside =item
-#
-# Returns: undef
-sub item {
+sub _item {
     my ($self, $text) = @_;
 
     # If there wasn't anything waiting, we're in the second or subsequent
     # paragraph of the item text.  Just output it.
     if (!$self->{ITEM_PENDING}) {
-        $self->output($text);
+        $self->_output($text);
         return;
     }
 
     # We're starting a new item.  Close any pending =item block.
     if ($self->{ITEM_OPEN}) {
-        $self->output("]\n");
+        $self->_output("]\n");
         $self->{ITEM_OPEN} = 0;
     }
 
     # Now, output the start of the item tag plus the text, if any.
     my $tag = $self->{ITEMS}[-1];
-    $text = defined($text) ? $text : q{};
-    $self->output($tag . "\n[" . $text);
+    $self->_output($tag . "\n[" . ($text // q{}));
     $self->{ITEM_OPEN}    = 1;
     $self->{ITEM_PENDING} = 0;
     return;
@@ -562,12 +552,9 @@ sub item {
 # paragraph.  The second is that if we're in the NAME section and see the name
 # and description of the page, we should print out the header.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
-#
-# Returns: undef
-sub cmd_para {
+sub _cmd_para {
     my ($self, $attrs, $text) = @_;
 
     # Check for an Id tag and, if found, remember it.
@@ -580,7 +567,7 @@ sub cmd_para {
 
     # If we're inside an item block, handle this as an item.
     if (@{ $self->{ITEMS} } > 0) {
-        $self->item($self->reformat($text));
+        $self->_item($self->_reformat($text));
     }
 
     # If we're in the NAME section and see a line that looks like the special
@@ -594,7 +581,7 @@ sub cmd_para {
     # Otherwise, this is a regular text block, so just output it with a
     # trailing blank line.
     else {
-        $self->output($self->reformat($text . "\n"));
+        $self->_output($self->_reformat($text . "\n"));
     }
     return;
 }
@@ -602,12 +589,9 @@ sub cmd_para {
 # Called for a verbatim paragraph.  The only trick is knowing whether to use
 # the item method to handle it or just print it out directly.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
-#
-# Returns: undef
-sub cmd_verbatim {
+sub _cmd_verbatim {
     my ($self, $attrs, $text) = @_;
 
     # Ignore empty verbatim paragraphs.
@@ -625,9 +609,9 @@ sub cmd_verbatim {
 
     # Pass the text to either item or output.
     if (@{ $self->{ITEMS} } > 0) {
-        $self->item("\\pre\n[$text");
+        $self->_item("\\pre\n[$text");
     } else {
-        $self->output("\\pre\n[$text");
+        $self->_output("\\pre\n[$text");
     }
     return;
 }
@@ -635,14 +619,11 @@ sub cmd_verbatim {
 # Called for literal text produced by =for and similar constructs.  Just
 # output the text verbatim.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
-#
-# Returns: undef
-sub cmd_data {
+sub _cmd_data {
     my ($self, $attrs, $text) = @_;
-    $self->output($text);
+    $self->_output($text);
     return;
 }
 
@@ -653,26 +634,23 @@ sub cmd_data {
 # The common code for handling all headings.  Take care of any pending items
 # or lists and then output the thread code for the heading.
 #
-# $self  - Pod::Thread object
 # $text  - The text of the heading itself
 # $level - The level of the heading as a number (2..5)
 # $tag   - An optional tag for the heading
-#
-# Returns: undef
-sub heading {
+sub _heading {
     my ($self, $text, $level, $tag) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item;
+    $self->_finish_item();
 
     # Strip any trailing whitespace.
     $text =~ s{ \s+ \z }{}xms;
 
     # Output the heading thread.
     if (defined $tag) {
-        $self->output("\\h$level($tag)[$text]\n\n");
+        $self->_output("\\h$level($tag)[$text]\n\n");
     } else {
-        $self->output("\\h$level" . "[$text]\n\n");
+        $self->_output("\\h$level" . "[$text]\n\n");
     }
     return;
 }
@@ -681,12 +659,11 @@ sub heading {
 # IN_NAME setting based on whether we're currently in the NAME section.  Also
 # add a tag to the heading if we have section information.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
 #
 # Returns: The result of the heading method
-sub cmd_head1 {
+sub _cmd_head1 {
     my ($self, $attrs, $text) = @_;
 
     # Strip whitespace from the text since we're going to compare it to other
@@ -708,30 +685,26 @@ sub cmd_head1 {
     $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
     push($self->{HEADINGS}->@*, $section);
     my $tag = 'S' . scalar($self->{HEADINGS}->@*);
-    return $self->heading($text, 2, "#$tag");
+    return $self->_heading($text, 2, "#$tag");
 }
 
 # All the other headings, which just hand off to the heading method.
-sub cmd_head2 { my ($self, $atr, $text) = @_; return $self->heading($text, 3) }
-sub cmd_head3 { my ($self, $atr, $text) = @_; return $self->heading($text, 4) }
-sub cmd_head4 { my ($self, $atr, $text) = @_; return $self->heading($text, 5) }
+sub _cmd_head2 { my ($self, $j, $text) = @_; return $self->_heading($text, 3) }
+sub _cmd_head3 { my ($self, $j, $text) = @_; return $self->_heading($text, 4) }
+sub _cmd_head4 { my ($self, $j, $text) = @_; return $self->_heading($text, 5) }
 
 ##############################################################################
 # List handling
 ##############################################################################
 
 # Output any waiting items and close any pending blocks.
-#
-# $self - Pod::Thread object
-#
-# Returns: undef
-sub finish_item {
+sub _finish_item {
     my ($self) = @_;
     if ($self->{ITEM_PENDING}) {
-        $self->item;
+        $self->_item();
     }
     if ($self->{ITEM_OPEN}) {
-        $self->output("]\n");
+        $self->_output("]\n");
         $self->{ITEM_OPEN} = 0;
     }
     return;
@@ -741,34 +714,27 @@ sub finish_item {
 # the four different types of lists (bullet, number, desc, and block).  Update
 # our internal tracking for =over blocks.
 #
-# $self - Pod::Thread object
 # $type - Type of =over block
-#
-# Returns: undef
-sub over_common_start {
+sub _over_start {
     my ($self, $type, $attrs) = @_;
     $self->{ITEM_OPEN} = 0;
-    push(@{ $self->{ITEMS} }, q{});
+    push($self->{ITEMS}->@*, q{});
     return;
 }
 
 # Handle the end of a list.  Output any waiting items, close any pending
 # blocks, and pop one level of item off the item stack.
-#
-# $self  - Pod::Thread object
-#
-# Returns: undef
-sub over_common_end {
+sub _over_end {
     my ($self) = @_;
 
     # If there is a waiting item or a pending close bracket, output it now.
-    $self->finish_item;
+    $self->_finish_item();
 
     # Pop the item off the stack.
-    pop(@{ $self->{ITEMS} });
+    pop($self->{ITEMS}->@*);
 
     # Set pending based on whether there's still another level of item open.
-    if (@{ $self->{ITEMS} } > 0) {
+    if ($self->{ITEMS}->@* > 0) {
         $self->{ITEM_OPEN} = 1;
     }
     return;
@@ -776,16 +742,16 @@ sub over_common_end {
 
 # All the individual start commands for the specific types of lists.  These
 # are all dispatched to the relevant common routine.
-sub start_over_block  { my ($s) = @_; return $s->over_common_start('block') }
-sub start_over_bullet { my ($s) = @_; return $s->over_common_start('bullet') }
-sub start_over_number { my ($s) = @_; return $s->over_common_start('number') }
-sub start_over_text   { my ($s) = @_; return $s->over_common_start('desc') }
+sub _start_over_block  { my ($s) = @_; return $s->_over_start('block') }
+sub _start_over_bullet { my ($s) = @_; return $s->_over_start('bullet') }
+sub _start_over_number { my ($s) = @_; return $s->_over_start('number') }
+sub _start_over_text   { my ($s) = @_; return $s->_over_start('desc') }
 
 # Likewise for the end commands.
-sub end_over_block  { my ($self) = @_; return $self->over_common_end() }
-sub end_over_bullet { my ($self) = @_; return $self->over_common_end() }
-sub end_over_number { my ($self) = @_; return $self->over_common_end() }
-sub end_over_text   { my ($self) = @_; return $self->over_common_end() }
+sub _end_over_block  { my ($self) = @_; return $self->_over_end() }
+sub _end_over_bullet { my ($self) = @_; return $self->_over_end() }
+sub _end_over_number { my ($self) = @_; return $self->_over_end() }
+sub _end_over_text   { my ($self) = @_; return $self->_over_end() }
 
 # An individual list item command.  Note that this fires when the =item
 # command is seen, not when we've accumulated all the text that's part of that
@@ -795,18 +761,15 @@ sub end_over_text   { my ($self) = @_; return $self->over_common_end() }
 # The type of the item is ignored, since we already determined that in the
 # =over block and saved it.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
-#
-# Returns: undef
-sub item_common {
+sub _item_common {
     my ($self, $type, $attrs, $text) = @_;
 
     # If we saw an =item command, any previous item block is finished, so
     # output that now.
     if ($self->{ITEM_PENDING}) {
-        $self->item();
+        $self->_item();
     }
 
     # The top of the stack should now contain our new type of item.
@@ -824,7 +787,7 @@ sub item_common {
 
     # Otherwise, anything in $text is body text.  Handle that now.
     else {
-        $self->item($self->reformat($text));
+        $self->_item($self->_reformat($text));
     }
 
     return;
@@ -832,11 +795,12 @@ sub item_common {
 
 # All the various item commands just call item_common.
 ## no critic (Subroutines::RequireArgUnpacking)
-sub cmd_item_block  { my $s = shift; return $s->item_common('block',  @_) }
-sub cmd_item_bullet { my $s = shift; return $s->item_common('bullet', @_) }
-sub cmd_item_number { my $s = shift; return $s->item_common('number', @_) }
-sub cmd_item_text   { my $s = shift; return $s->item_common('desc',   @_) }
+sub _cmd_item_block  { my $s = shift; return $s->_item_common('block',  @_) }
+sub _cmd_item_bullet { my $s = shift; return $s->_item_common('bullet', @_) }
+sub _cmd_item_number { my $s = shift; return $s->_item_common('number', @_) }
+sub _cmd_item_text   { my $s = shift; return $s->_item_common('desc',   @_) }
 ## use critic
+## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
 
 ##############################################################################
 # Formatting codes
@@ -845,28 +809,27 @@ sub cmd_item_text   { my $s = shift; return $s->item_common('desc',   @_) }
 # The simple ones.  These are here mostly so that subclasses can override them
 # and do more complicated things.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
 #
 # Returns: The formatted text
-sub cmd_b { my ($self, $attrs, $text) = @_; return "\\bold[$text]" }
-sub cmd_c { my ($self, $attrs, $text) = @_; return "\\code[$text]" }
-sub cmd_f { my ($self, $attrs, $text) = @_; return "\\italic(file)[$text]" }
-sub cmd_i { my ($self, $attrs, $text) = @_; return "\\italic[$text]" }
-sub cmd_x { return q{} }
+sub _cmd_b { my ($self, $attrs, $text) = @_; return "\\bold[$text]" }
+sub _cmd_c { my ($self, $attrs, $text) = @_; return "\\code[$text]" }
+sub _cmd_f { my ($self, $attrs, $text) = @_; return "\\italic(file)[$text]" }
+sub _cmd_i { my ($self, $attrs, $text) = @_; return "\\italic[$text]" }
+sub _cmd_x { return q{} }
 
-# Format a link.  Don't try to actually generate hyperlinks for anything other
-# than normal URLs and section links within our same document.  For the
-# latter, we can only do this if we have section information from our
-# configuration.
+# Format a link.  Don't try to generate hyperlinks for anything other than
+# normal URLs and section links within our same document.  For the latter, we
+# can only do that for sections we've already seen; for everything else, use a
+# PLACEHOLDER tag that we'll try to replace with a real link as the last step
+# of formatting the document.
 #
-# $self  - Pod::Thread object
 # $attrs - Attributes for this command
 # $text  - The text of the block
 #
 # Returns: The formatted link
-sub cmd_l {
+sub _cmd_l {
     my ($self, $attrs, $text) = @_;
     if ($attrs->{type} eq 'url') {
         if (!defined($attrs->{to}) || $attrs->{to} eq $text) {
@@ -875,18 +838,24 @@ sub cmd_l {
             return "\\link[$attrs->{to}][$text]";
         }
     } elsif ($attrs->{type} eq 'pod') {
-        my $page     = $attrs->{to};
-        my $section  = $attrs->{section};
-        my $sections = $self->{opt_contents} || $self->{opt_navbar};
-        if (!defined($page) && defined($section) && $sections->{$section}) {
+        my $page    = $attrs->{to};
+        my $section = $attrs->{section};
+        if (!defined($page) && defined($section)) {
+            my $tag = 'PLACEHOLDER';
+            for my $i (0 .. scalar($self->{HEADINGS}->$#*)) {
+                if ($self->{HEADINGS}[$i] eq $section) {
+                    $tag = 'S' . ($i + 1);
+                    last;
+                }
+            }
             $text =~ s{ \A \" }{}xms;
             $text =~ s{ \" \z }{}xms;
-            return "\\link[#$sections->{$section}][$text]";
+            return "\\link[#$tag][$text]";
         }
     }
 
     # Fallthrough just returns the preformatted text from Pod::Simple.
-    return defined($text) ? $text : q{};
+    return $text // q{};
 }
 
 ##############################################################################

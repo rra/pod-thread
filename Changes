@@ -1,5 +1,10 @@
                      Revision history for Pod::Thread
 
+2.01 - Not Released
+
+ - Fix internal section links.
+ - Output the document before erroring out if POD errors were seen.
+
 2.00 - 2021-03-28
 
  - Table of contents and navbar generation is now handled internally in
