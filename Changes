@@ -4,6 +4,7 @@
 
  - Fix internal section links.
  - Output the document before erroring out if POD errors were seen.
+ - Add bugtracker, homepage, and repository package metadata.
 
 2.00 - 2021-03-28
 
