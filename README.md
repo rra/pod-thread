@@ -75,6 +75,7 @@ modules will be used by the test suite if present:
 
 * Devel::Cover
 * Perl::Critic::Freenode
+* Test::CPAN::Changes (part of CPAN-Changes)
 * Test::MinimumVersion
 * Test::Perl::Critic
 * Test::Pod
