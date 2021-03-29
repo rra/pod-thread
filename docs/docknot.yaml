@@ -80,8 +80,8 @@ description: |
   navigation bar at the top of the generated file.
 
 requirements: |
-  Perl 5.24 or later and Pod::Parser 3.06 or later.  As mentioned above, it's
-  also not particularly useful without spin.
+  Perl 5.24 or later.  As mentioned above, it's also not particularly useful
+  without spin.
 
 test:
   lancaster: true
