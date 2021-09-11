@@ -491,37 +491,6 @@ sub _end_document {
 # Text blocks
 ##############################################################################
 
-# Called for each paragraph of text that we see inside an item.  It's also
-# called with no text when it's time to start an item even though there wasn't
-# any text associated with it (which happens for description lists).  The top
-# of the ITEMS stack will hold the command that should be used to open the
-# item block in thread.
-#
-# $text - Contents of the text block inside =item
-sub _item {
-    my ($self, $text) = @_;
-
-    # If there wasn't anything waiting, we're in the second or subsequent
-    # paragraph of the item text.  Just output it.
-    if (!$self->{ITEM_PENDING}) {
-        $self->_output($text);
-        return;
-    }
-
-    # We're starting a new item.  Close any pending =item block.
-    if ($self->{ITEM_OPEN}) {
-        $self->_output("]\n");
-        $self->{ITEM_OPEN} = 0;
-    }
-
-    # Now, output the start of the item tag plus the text, if any.
-    my $tag = $self->{ITEMS}[-1];
-    $self->_output($tag . "\n[" . ($text // q{}));
-    $self->{ITEM_OPEN}    = 1;
-    $self->{ITEM_PENDING} = 0;
-    return;
-}
-
 # Called for a regular text block.  There are two tricky parts here.  One is
 # that if there is a pending item tag, we need to format this as an item
 # paragraph.  The second is that if we're in the NAME section and see the name
@@ -662,6 +631,37 @@ sub _cmd_head4 { my ($self, $j, $text) = @_; return $self->_heading($text, 5) }
 # List handling
 ##############################################################################
 
+# Called for each paragraph of text that we see inside an item.  It's also
+# called with no text when it's time to start an item even though there wasn't
+# any text associated with it (which happens for description lists).  The top
+# of the ITEMS stack will hold the command that should be used to open the
+# item block in thread.
+#
+# $text - Contents of the text block inside =item
+sub _item {
+    my ($self, $text) = @_;
+
+    # If there wasn't anything waiting, we're in the second or subsequent
+    # paragraph of the item text.  Just output it.
+    if (!$self->{ITEM_PENDING}) {
+        $self->_output($text);
+        return;
+    }
+
+    # We're starting a new item.  Close any pending =item block.
+    if ($self->{ITEM_OPEN}) {
+        $self->_output("]\n");
+        $self->{ITEM_OPEN} = 0;
+    }
+
+    # Now, output the start of the item tag plus the text, if any.
+    my $tag = $self->{ITEMS}[-1];
+    $self->_output($tag . "\n[" . ($text // q{}));
+    $self->{ITEM_OPEN}    = 1;
+    $self->{ITEM_PENDING} = 0;
+    return;
+}
+
 # Output any waiting items and close any pending blocks.
 sub _finish_item {
     my ($self) = @_;
@@ -712,13 +712,24 @@ sub _over_end {
 }
 
 # All the individual start commands for the specific types of lists.  These
-# are all dispatched to the relevant common routine.  Pod::Simple gives us the
-# type information on both the =over and the =item.  We ignore it here and use
-# it when we see the =item.
-sub _start_over_block  { my ($self) = @_; return $self->_over_start() }
+# are all dispatched to the relevant common routine except for block.
+# Pod::Simple gives us the type information on both the =over and the =item.
+# We ignore it here and use it when we see the =item.
 sub _start_over_bullet { my ($self) = @_; return $self->_over_start() }
 sub _start_over_number { my ($self) = @_; return $self->_over_start() }
 sub _start_over_text   { my ($self) = @_; return $self->_over_start() }
+
+# Over of type block (which is =over without any =item) has to be handled
+# specially, since normally we defer issuing the tag until we see the first
+# =item and that won't happen here.
+sub _start_over_block {
+    my ($self) = @_;
+    $self->_over_start();
+    $self->{ITEMS}[-1] = '\\block';
+    $self->{ITEM_PENDING} = 1;
+    $self->_item();
+    return;
+}
 
 # Likewise for the end commands.
 sub _end_over_block  { my ($self) = @_; return $self->_over_end() }

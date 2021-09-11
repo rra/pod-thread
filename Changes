@@ -5,6 +5,7 @@
  - Remove support for parsing CVS $Id strings and emitting \id commands.
  - Fix internal section links.
  - Fix conversion of nested =over blocks.
+ - Fix conversion of =over blocks without an =item.
  - Output the document before erroring out if POD errors were seen.
  - Add bugtracker, homepage, and repository package metadata.
 
