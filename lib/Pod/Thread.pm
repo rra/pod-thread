@@ -777,7 +777,6 @@ sub _item_common {
 
 # All the various item commands just call item_common.
 ## no critic (Subroutines::RequireArgUnpacking)
-sub _cmd_item_block  { my $s = shift; return $s->_item_common('block',  @_) }
 sub _cmd_item_bullet { my $s = shift; return $s->_item_common('bullet', @_) }
 sub _cmd_item_number { my $s = shift; return $s->_item_common('number', @_) }
 sub _cmd_item_text   { my $s = shift; return $s->_item_common('desc',   @_) }
