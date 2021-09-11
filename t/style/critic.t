@@ -7,7 +7,7 @@
 # files, junk, and any files explicitly configured to be ignored.
 #
 # Written by Russ Allbery <eagle@eyrie.org>
-# Copyright 2019-2020 Russ Allbery <eagle@eyrie.org>
+# Copyright 2019-2021 Russ Allbery <eagle@eyrie.org>
 # Copyright 2013-2014
 #     The Board of Trustees of the Leland Stanford Junior University
 #
@@ -48,7 +48,17 @@ skip_unless_author('Coding style tests');
 
 # Load prerequisite modules.
 use_prereq('Perl::Critic::Utils');
-use_prereq('Test::Perl::Critic');
+
+# Probe for whether Perl::Critic::Community is installed and use that to
+# control whether to pass an exclusion to Perl::Critic.  This is the new name
+# of Perl::Critic::Freenode, and we have to customize one of our exclusions
+# based on its name or we get a spurious warning.
+eval { require Perl::Critic::Community };
+if ($@) {
+    use_prereq('Test::Perl::Critic', -exclude => ['Community::EmptyReturn']);
+} else {
+    use_prereq('Test::Perl::Critic');
+}
 
 # Force the embedded Perl::Tidy check to use the correct configuration.
 local $ENV{PERLTIDY} = 't/data/perltidyrc';

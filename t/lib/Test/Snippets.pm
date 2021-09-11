@@ -51,12 +51,8 @@ sub _stderr_save {
         mkdir($tmpdir, 0777);
     }
     my $path = File::Spec->catfile($tmpdir, "out$$.err");
-
-    ## no critic(InputOutput::RequireBriefOpen)
     open($OLD_STDERR, '>&', \*STDERR);
     open(STDERR,      '>',  $path);
-    ## use critic
-
     $SAVED_STDERR = $path;
     return;
 }
