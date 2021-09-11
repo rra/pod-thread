@@ -1,7 +1,8 @@
                      Revision history for Pod::Thread
 
-2.01 - Not Released
+3.00 - Not Released
 
+ - Remove support for parsing CVS $Id strings and emitting \id commands.
  - Fix internal section links.
  - Fix conversion of nested =over blocks.
  - Output the document before erroring out if POD errors were seen.

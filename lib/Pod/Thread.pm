@@ -44,23 +44,6 @@ my $WRAP_MARGIN = 75;
 # Initialization
 ##############################################################################
 
-# Called for every non-POD line in the file.  This is used to grab the Id
-# string (from a CVS or Subversion tag) if present in the file.  If we see
-# this, we use it to generate a thread \id command.
-#
-# $line   - The non-POD line
-# $number - The line number of the input file
-# $parser - The Pod::Thread parser
-#
-# Returns: undef
-sub _handle_code {
-    my ($line, $line_number, $self) = @_;
-    if (!$self->{opt_id} && $line =~ m{ (\$ Id: .* \$) }xms) {
-        $self->{opt_id} = $1;
-    }
-    return;
-}
-
 # Initialize the object and set various Pod::Simple options that we need.
 # Here, we also process any additional options passed to the constructor or
 # set up defaults if none were given.  Note that all internal object keys are
@@ -91,9 +74,6 @@ sub new {
     # Always send errors to standard error.
     $self->no_errata_section(1);
     $self->complain_stderr(1);
-
-    # Look for Id strings in non-POD lines.
-    $self->code_handler(\&_handle_code);
 
     # Pod::Simple doesn't do anything useful with our arguments, but we want
     # to put them in our object as hash keys and values.  This could cause
@@ -196,7 +176,7 @@ sub _handle_element_end {
             if ($self->{PENDING}->@* > 1) {
                 $self->{PENDING}[-1][1] .= $text;
             } else {
-                $self->output($text);
+                $self->_output($text);
             }
         }
         return;
@@ -403,11 +383,6 @@ sub _header {
     my $style  = $self->{opt_style} || q{};
     my $output = q{};
 
-    # Handle the Id string if found.
-    if ($self->{opt_id}) {
-        $output .= "\\id[$self->{opt_id}]\n\n";
-    }
-
     # Add the basic title, page heading, and style if we saw a title.
     if ($self->{TITLE}) {
         $output .= "\\heading[$self->{TITLE}][$style]\n\n";
@@ -557,11 +532,6 @@ sub _item {
 sub _cmd_para {
     my ($self, $attrs, $text) = @_;
 
-    # Check for an Id tag and, if found, remember it.
-    if (!$self->{opt_id} && $text =~ m{ (\$ Id: .* \$) }xms) {
-        $self->{opt_id} = $1;
-    }
-
     # Ensure the text block ends with a single newline.
     $text =~ s{ \s+ \z }{\n}xms;
 
@@ -597,11 +567,6 @@ sub _cmd_verbatim {
     # Ignore empty verbatim paragraphs.
     if ($text =~ m{ \A \s* \z }xms) {
         return;
-    }
-
-    # Check for an Id tag and, if found, remember it.
-    if (!$self->{opt_id} && $text =~ m{ (\$ Id: .* \$) }xms) {
-        $self->{opt_id} = $1;
     }
 
     # Ensure the paragraph ends in a bracket and two newlines.
