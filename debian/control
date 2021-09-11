@@ -13,7 +13,7 @@ Build-Depends:
 Rules-Requires-Root: no
 Testsuite: autopkgtest-pkg-perl
 Maintainer: Russ Allbery <rra@debian.org>
-Standards-Version: 4.5.1
+Standards-Version: 4.6.0
 Homepage: https://www.eyrie.org/~eagle/software/pod-thread/
 Vcs-Git: https://salsa.debian.org/rra/libpod-thread-perl.git
 Vcs-Browser: https://salsa.debian.org/rra/libpod-thread-perl

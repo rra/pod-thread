@@ -14,6 +14,7 @@ libpod-thread-perl (3.00-1) UNRELEASED; urgency=medium
     - Output the document before erroring out if POD errors were seen.
     - Suppress \signature if the input document was empty.
     - Add bugtracker, homepage, and repository package metadata.
+  * Update standards version to 4.6.0 (no changes required).
 
  -- Russ Allbery <rra@debian.org>  Sat, 11 Sep 2021 16:14:03 -0700
 
