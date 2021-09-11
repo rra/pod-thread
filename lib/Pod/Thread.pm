@@ -285,7 +285,7 @@ sub _flush_output {
 # Returns: The thread code for the table of contents
 sub _contents {
     my ($self) = @_;
-    return if !$self->{HEADINGS}->@*;
+    return q{} if !$self->{HEADINGS}->@*;
 
     # Construct and return the table of contents.
     my $output = "\\h2[Table of Contents]\n\n";
