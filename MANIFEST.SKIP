@@ -3,6 +3,9 @@
 # Avoid version control files.
 ^\.git/
 
+# Avoid GitHub CI configuration.
+^\.github/
+
 # Avoid generated build files.
 \bblib/
 
