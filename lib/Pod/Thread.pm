@@ -10,7 +10,7 @@
 # Modules and declarations
 ##############################################################################
 
-package Pod::Thread 2.00;
+package Pod::Thread 3.00;
 
 use 5.024;
 use strict;

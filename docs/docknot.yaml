@@ -15,7 +15,7 @@ format: v1
 
 name: Pod::Thread
 maintainer: Russ Allbery <rra@cpan.org>
-version: '2.00'
+version: '3.00'
 synopsis: Format POD source into thread, an HTML macro language
 
 license:

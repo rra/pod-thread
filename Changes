@@ -1,6 +1,6 @@
                      Revision history for Pod::Thread
 
-3.00 - Not Released
+3.00 - 2021-09-11
 
  - Remove support for parsing CVS $Id strings and emitting \id commands.
  - Fix internal section links.

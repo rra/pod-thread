@@ -35,6 +35,7 @@ Files: t/data/perltidyrc t/data/snippets/README.md
 Copyright: 2012-2013
     The Board of Trustees of the Leland Stanford Junior University
   2015, 2018, 2021 Russ Allbery <rra@cpan.org>
+  2021 Russ Allbery <eagle@eyrie.org>
 License: all-permissive
  Copying and distribution of this file, with or without modification, are
  permitted in any medium without royalty provided the copyright notice and
