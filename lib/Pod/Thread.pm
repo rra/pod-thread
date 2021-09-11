@@ -311,7 +311,7 @@ sub _capitalize_for_navbar {
     my ($self, $heading) = @_;
     my @words = split(q{ }, $heading);
     for my $word (@words) {
-        if ($word !~ m{ _ }xms) {
+        if ($word !~ m{ _ }xms && $word !~ m{ \A \\ }xms) {
             $word = lc($word);
             if ($word ne 'and') {
                 $word = ucfirst($word);
