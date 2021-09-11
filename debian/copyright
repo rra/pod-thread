@@ -4,7 +4,8 @@ Upstream-Name: Pod-Thread
 Upstream-Contact: Russ Allbery <rra@cpan.org>
 
 Files: *
-Copyright: 2002, 2008-2009, 2013, 2021 Russ Allbery <rra@cpan.org>
+Copyright: 2002, 2008-2009, 2013, 2015-2016, 2018-2021
+    Russ Allbery <rra@cpan.org>
   2011-2014 The Board of Trustees of the Leland Stanford Junior University
   2015-2016, 2018-2021 Russ Allbery <eagle@eyrie.org>
 License: Expat
@@ -31,20 +32,9 @@ Files: t/data/perltidyrc t/data/snippets/README.md
 Copyright: 2012-2013
     The Board of Trustees of the Leland Stanford Junior University
   2015, 2018, 2021 Russ Allbery <rra@cpan.org>
+  2021 Russ Allbery <eagle@eyrie.org>
 License: all-permissive
  Copying and distribution of this file, with or without modification, are
  permitted in any medium without royalty provided the copyright notice and
  this notice are preserved.  This file is offered as-is, without any
  warranty.
-
-Files: t/lib/Test/Snippets.pm
-Copyright: 2015-2016, 2018-2021 Russ Allbery <rra@cpan.org>
-License: Perl
- This program is free software; you may redistribute it and/or modify it
- under the same terms as Perl itself.  This means that you may choose
- between the two licenses that Perl is released under:  the GNU GPL and the
- Artistic License.  Please see your Perl distribution for the details and
- copies of the licenses.
-Comment: You can find the GPL version 1 in /usr/share/common-licenses/GPL-1
- and the Artistic License in /usr/share/common-licenses/Artistic on Debian
- systems.
