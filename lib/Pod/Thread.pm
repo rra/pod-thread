@@ -517,7 +517,7 @@ sub _end_document {
 ##############################################################################
 
 # Called for each paragraph of text that we see inside an item.  It's also
-# called with no text when it's time to close an item even though there wasn't
+# called with no text when it's time to start an item even though there wasn't
 # any text associated with it (which happens for description lists).  The top
 # of the ITEMS stack will hold the command that should be used to open the
 # item block in thread.
@@ -713,10 +713,16 @@ sub _finish_item {
 # Handle the beginning of an =over block.  This is called by the handlers for
 # the four different types of lists (bullet, number, desc, and block).  Update
 # our internal tracking for =over blocks.
-#
-# $type - Type of =over block
 sub _over_start {
-    my ($self, $type, $attrs) = @_;
+    my ($self) = @_;
+
+    # If an item was already pending, we have nested =over blocks.  Open the
+    # outer block here before we start processing items for the inside block.
+    if ($self->{ITEM_PENDING}) {
+        $self->_item();
+    }
+
+    # Start a new block.
     $self->{ITEM_OPEN} = 0;
     push($self->{ITEMS}->@*, q{});
     return;
@@ -741,11 +747,13 @@ sub _over_end {
 }
 
 # All the individual start commands for the specific types of lists.  These
-# are all dispatched to the relevant common routine.
-sub _start_over_block  { my ($s) = @_; return $s->_over_start('block') }
-sub _start_over_bullet { my ($s) = @_; return $s->_over_start('bullet') }
-sub _start_over_number { my ($s) = @_; return $s->_over_start('number') }
-sub _start_over_text   { my ($s) = @_; return $s->_over_start('desc') }
+# are all dispatched to the relevant common routine.  Pod::Simple gives us the
+# type information on both the =over and the =item.  We ignore it here and use
+# it when we see the =item.
+sub _start_over_block  { my ($self) = @_; return $self->_over_start() }
+sub _start_over_bullet { my ($self) = @_; return $self->_over_start() }
+sub _start_over_number { my ($self) = @_; return $self->_over_start() }
+sub _start_over_text   { my ($self) = @_; return $self->_over_start() }
 
 # Likewise for the end commands.
 sub _end_over_block  { my ($self) = @_; return $self->_over_end() }
@@ -758,9 +766,7 @@ sub _end_over_text   { my ($self) = @_; return $self->_over_end() }
 # item.  We may have some body text and we may not, but we have to defer the
 # end of the item until the surrounding =over is closed.
 #
-# The type of the item is ignored, since we already determined that in the
-# =over block and saved it.
-#
+# $type  - The type of the item
 # $attrs - Attributes for this command
 # $text  - The text of the block
 sub _item_common {

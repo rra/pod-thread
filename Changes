@@ -3,6 +3,7 @@
 2.01 - Not Released
 
  - Fix internal section links.
+ - Fix conversion of nested =over blocks.
  - Output the document before erroring out if POD errors were seen.
  - Add bugtracker, homepage, and repository package metadata.
 
