@@ -6,6 +6,8 @@
  - Fix internal section links.
  - Fix conversion of nested =over blocks.
  - Fix conversion of =over blocks without an =item.
+ - Fix links to headings containing markup.
+ - Fix metacharacter escaping in headings, contents, and navbar.
  - Fix handling of =for thread and =begin thread.
  - Output the document before erroring out if POD errors were seen.
  - Suppress \signature if the input document was empty.

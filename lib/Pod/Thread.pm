@@ -20,6 +20,7 @@ use base qw(Pod::Simple);
 
 use Carp qw(croak);
 use Encode qw(encode);
+use Text::Balanced qw(extract_bracketed);
 use Text::Wrap qw(wrap);
 
 # Pod::Simple uses subroutines named as if they're private for subclassing,
@@ -463,16 +464,35 @@ sub _end_document {
     }
 
     # Search for any unresolved links and try to fix their anchors.  If we
-    # never saw the heading in question, remove the \link command.
+    # never saw the heading in question, remove the \link command.  We have to
+    # use Text::Balanced and substr surgery to extract the anchor text since
+    # it may contain arbitrary markup.
+    #
+    # This is very inefficient for large documents, but I doubt anything
+    # processed by this module will be large enough to matter.
     my $i        = 1;
-    my %headings = map { $_ => $i++ } $self->{HEADINGS}->@*;
-    $self->{OUTPUT} =~ s{ \\link \[\#PLACEHOLDER\] \[ ([^\]]+) \] }{
-        if (defined($headings{$1})) {
-            "\\link[#S$headings{$1}][$1]";
+    my %headings = map { ("[$_]", $i++) } $self->{HEADINGS}->@*;
+    my $search   = '\\link[#PLACEHOLDER]';
+    my $start    = 0;
+    while (($start = index($self->{OUTPUT}, $search, $start)) != -1) {
+        my $text = substr($self->{OUTPUT}, $start + length($search));
+        my ($anchor) = extract_bracketed($text, '[]', undef);
+
+        # If this is a known heading, replace #PLACEHOLDER with the link to
+        # that heading and continue processing with the anchor text.
+        # Otherwise, replace the entire \link command with the anchor text and
+        # continue processing after it.
+        if (defined($anchor) && defined($headings{$anchor})) {
+            $start += length('\\link[');
+            my $link = "#S$headings{$anchor}";
+            substr($self->{OUTPUT}, $start, length('#PLACEHOLDER'), $link);
         } else {
-            $1;
+            my $length = length('\\link[#PLACEHOLDER]') + length($anchor);
+            $anchor = substr($anchor, 1, -1);
+            substr($self->{OUTPUT}, $start, $length, $anchor);
+            $start += length($anchor);
         }
-    }xmsge;
+    }
 
     # Output the header.
     my $header = $self->_header();
@@ -626,10 +646,7 @@ sub _cmd_head1 {
     $self->{IN_NAME} = 0;
 
     # Not in the name section.  Record the heading and a tag to the header.
-    # We have to strip any embedded markup from the section text.
-    my $section = $text;
-    $section =~ s{ \\ \w+ \[ ([^\]]+) \] }{$1}xmsg;
-    push($self->{HEADINGS}->@*, $section);
+    push($self->{HEADINGS}->@*, $text);
     my $tag = 'S' . scalar($self->{HEADINGS}->@*);
     return $self->_heading($text, 2, "#$tag");
 }
