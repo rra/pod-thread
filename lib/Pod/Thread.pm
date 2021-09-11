@@ -104,13 +104,15 @@ sub new {
 # of the tag.
 
 # Add a block of text to the contents of the current node, protecting any
-# thread metacharacters as we do.
+# thread metacharacters unless we're in a literal (=for or =begin) block.
 #
 # $text - A block of ordinary text seen in the POD
 sub _handle_text {
     my ($self, $text) = @_;
-    $text =~ s{ \\ }{\\\\}xmsg;
-    $text =~ s{ ([\[\]]) }{'\\entity[' . ord($1) . ']'}xmseg;
+    if (!$self->{LITERAL}) {
+        $text =~ s{ \\ }{\\\\}xmsg;
+        $text =~ s{ ([\[\]]) }{'\\entity[' . ord($1) . ']'}xmseg;
+    }
     my $tag = $self->{PENDING}[-1];
     $tag->[1] .= $text;
     return;
@@ -427,6 +429,7 @@ sub _start_document {
     $self->{ITEM_OPEN}    = 0;
     $self->{ITEM_PENDING} = 0;
     $self->{ITEMS}        = [];
+    $self->{LITERAL}      = 0;
     $self->{OUTPUT}       = q{};
     $self->{PENDING}      = [[]];
     $self->{SUBHEADING}   = undef;
@@ -553,15 +556,22 @@ sub _cmd_verbatim {
 }
 
 # Called for literal text produced by =for and similar constructs.  Just
-# output the text verbatim.
+# output the text verbatim with cleaned-up whitespace.
 #
 # $attrs - Attributes for this command
 # $text  - The text of the block
 sub _cmd_data {
     my ($self, $attrs, $text) = @_;
+    $text =~ s{ \A (\s*\n)+ }{}xms;
+    $text =~ s{ \s* \z }{\n\n}xms;
     $self->_output($text);
     return;
 }
+
+# Called when =for and similar constructs are started or ended.  Set or clear
+# the literal flag so that we won't escape the text on the way in.
+sub _start_for { my ($self) = @_; $self->{LITERAL} = 1; return; }
+sub _end_for   { my ($self) = @_; $self->{LITERAL} = 0; return; }
 
 ##############################################################################
 # Headings

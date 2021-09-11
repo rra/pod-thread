@@ -6,6 +6,7 @@
  - Fix internal section links.
  - Fix conversion of nested =over blocks.
  - Fix conversion of =over blocks without an =item.
+ - Fix handling of =for thread and =begin thread.
  - Output the document before erroring out if POD errors were seen.
  - Suppress \signature if the input document was empty.
  - Add bugtracker, homepage, and repository package metadata.
