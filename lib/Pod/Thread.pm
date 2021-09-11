@@ -454,8 +454,10 @@ sub _start_document {
 sub _end_document {
     my ($self) = @_;
 
-    # Output the \signature command.
-    $self->_output("\\signature\n");
+    # Output the \signature command if we saw any content.
+    if (!$self->{CONTENTLESS}) {
+        $self->_output("\\signature\n");
+    }
 
     # Search for any unresolved links and try to fix their anchors.  If we
     # never saw the heading in question, remove the \link command.
