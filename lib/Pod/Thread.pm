@@ -309,7 +309,7 @@ sub _contents {
 # Returns: The properly capitalized heading.
 sub _capitalize_for_navbar {
     my ($self, $heading) = @_;
-    my @words = split(q{ }, $heading);
+    my @words = split(m{ (\s+) }xms, $heading);
     for my $word (@words) {
         if ($word !~ m{ _ }xms && $word !~ m{ \A \\ }xms) {
             $word = lc($word);
@@ -318,7 +318,7 @@ sub _capitalize_for_navbar {
             }
         }
     }
-    return join(q{ }, @words);
+    return join(q{}, @words);
 }
 
 # Construct a navigation bar.  This is like a table of contents, but lists the

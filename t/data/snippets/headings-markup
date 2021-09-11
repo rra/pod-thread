@@ -13,7 +13,7 @@ navbar 1
 [output]
 \class(navbar)[
   \link[#S1][Head \bold[BOLD \italic[ITALIC \code[CODE]]]]
-  | \link[#S2][White Space]
+  | \link[#S2][White Space]
 ]
 
 \h2[Table of Contents]
