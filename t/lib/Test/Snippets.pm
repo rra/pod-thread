@@ -204,7 +204,8 @@ sub test_snippet {
 __END__
 
 =for stopwords
-Allbery podlators PerlIO UTF-8 formatter FH whitespace
+Allbery podlators PerlIO UTF-8 formatter FH whitespace MERCHANTABILITY
+NONINFRINGEMENT sublicense
 
 =head1 NAME
 
