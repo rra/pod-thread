@@ -27,5 +27,5 @@ Depends:
 Description: Convert POD to thread, an HTML macro language
  Pod::Thread converts documentation in POD format to thread, a macro
  language used to generate HTML.  This module and the pod2thread program
- provided by this package are used by spin to handle formatting of POD
+ provided by this package are used by DocKnot to handle formatting of POD
  documentation.
