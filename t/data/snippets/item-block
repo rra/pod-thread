@@ -16,8 +16,9 @@ lines after Pod::Thread is done with it.
 \block
 [Some paragraph of text.
 
-Another paragraph of text with multiple lines.  Make this long enough that
-it will wrap to multiple lines after Pod::Thread is done with it.
+Another paragraph of text
+with multiple lines.  Make this long enough that it will wrap to multiple
+lines after Pod::Thread is done with it.
 ]
 
 \signature
