@@ -31,7 +31,7 @@ distribution:
   packaging:
     debian:
       package: libpod-thread-perl
-      personal: true
+      summary: Pod::Thread is packaged for Debian as libpod-thread-perl.
   section: web
   tarname: Pod-Thread
   version: pod-thread
