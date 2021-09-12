@@ -323,7 +323,7 @@ sub _navbar {
 
         # If adding this section would put us over 60 characters, output the
         # current line with a line break.
-        if ($length + length($section) > $NAVBAR_LENGTH) {
+        if ($length > 0 && $length + length($section) > $NAVBAR_LENGTH) {
             $output .= "$pending\\break\n  ";
             $pending = q{};
             $length  = 0;
@@ -428,6 +428,23 @@ sub _start_document {
     return;
 }
 
+# Canonicalize a heading for internal links.  We run both the anchor text and
+# the heading itself through this function so that whitespace differences
+# don't cause us to fail to create the link.
+#
+# Note that this affects only the end-of-document rewriting, not the links we
+# create as we go, because this case is rare and doing it as we go would
+# require more state tracking.
+#
+# $heading - Text of heading
+#
+# Returns: Canonicalized heading text
+sub _canonicalize_heading {
+    my ($self, $heading) = @_;
+    $heading =~ s{ \s+ }{ }xmsg;
+    return $heading;
+}
+
 # Handle the end of the document.  Tack \signature onto the end, output the
 # header and the accumulated output, and die if we saw any errors.
 #
@@ -448,20 +465,25 @@ sub _end_document {
     # This is very inefficient for large documents, but I doubt anything
     # processed by this module will be large enough to matter.
     my $i        = 1;
-    my %headings = map { ("[$_]", $i++) } $self->{HEADINGS}->@*;
     my $search   = '\\link[#PLACEHOLDER]';
     my $start    = 0;
+    my %headings = map { ('[' . $self->_canonicalize_heading($_) . ']', $i++) }
+      $self->{HEADINGS}->@*;
     while (($start = index($self->{OUTPUT}, $search, $start)) != -1) {
         my $text = substr($self->{OUTPUT}, $start + length($search));
         my ($anchor) = extract_bracketed($text, '[]', undef);
+        my $heading;
+        if ($anchor) {
+            $heading = $self->_canonicalize_heading($anchor);
+        }
 
         # If this is a known heading, replace #PLACEHOLDER with the link to
         # that heading and continue processing with the anchor text.
         # Otherwise, replace the entire \link command with the anchor text and
         # continue processing after it.
-        if (defined($anchor) && defined($headings{$anchor})) {
+        if (defined($anchor) && defined($headings{$heading})) {
             $start += length('\\link[');
-            my $link = "#S$headings{$anchor}";
+            my $link = "#S$headings{$heading}";
             substr($self->{OUTPUT}, $start, length('#PLACEHOLDER'), $link);
         } else {
             my $length = length('\\link[#PLACEHOLDER]') + length($anchor);

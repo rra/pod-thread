@@ -3,6 +3,7 @@
 3.00 - 2021-09-11
 
  - Remove support for parsing CVS $Id strings and emitting \id commands.
+ - Stop wrapping output text.
  - Fix internal section links.
  - Fix conversion of nested =over blocks.
  - Fix conversion of =over blocks without an =item.
@@ -10,7 +11,7 @@
  - Fix metacharacter escaping in headings, contents, and navbar.
  - Fix handling of =for thread and =begin thread.
  - Fix non-breaking spaces in navbar section names.
- - Stop wrapping output text.
+ - Fix internal links whose anchors are wrapped.
  - Output the document before erroring out if POD errors were seen.
  - Suppress \signature if the input document was empty.
  - Add bugtracker, homepage, and repository package metadata.
