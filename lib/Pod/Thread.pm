@@ -900,11 +900,15 @@ Pod::Thread is a module that can convert documentation in the POD format
 language.  It lets the converter from thread to HTML handle some of the
 annoying parts of conversion to HTML.
 
+Pod::Thread is primarily intended for use with the L<App::DocKnot::Spin>
+static site generator, which implements the thread macro language.  This
+module provides POD formatting into thread and thus to HTML.
+
 As a derived class from Pod::Simple, Pod::Thread supports the same methods and
-interfaces.  See L<Pod::Simple> for all the details; briefly, one creates a
-new parser with C<< Pod::Thread->new() >>, sets the output destination with
-either output_fh() or output_string(), and then calls one of parse_file(),
-parse_string_document(), or parse_lines().
+interfaces.  Briefly, one creates a new parser with Pod::Thread->new(), sets
+the output destination with either output_fh() or output_string(), and then
+calls one of parse_file(), parse_string_document(), or parse_lines().  See
+L<Pod::Simple> for all the details.
 
 new() can take the following options, in the form of key/value pairs, to
 control the behavior of the formatter:
@@ -915,11 +919,6 @@ control the behavior of the formatter:
 
 If set to a true value, output a table of contents section at the beginning of
 the document.  Only top-level headings will be shown.
-
-=item id
-
-Sets the CVS Id string for the file.  If this isn't set, Pod::Thread will
-try to find it in the file.
 
 =item navbar
 
@@ -982,13 +981,15 @@ SOFTWARE.
 
 =head1 SEE ALSO
 
-L<Pod::Simple>, L<spin(1)>
+L<App::DocKnot::Spin>, L<Pod::Simple>, L<docknot(1)>
 
 This module is part of the Pod-Thread distribution.  The current version of
 Pod-Thread is available from CPAN, or directly from its web site at
 L<https://www.eyrie.org/~eagle/software/pod-thread/>.
 
-B<spin> is available from L<https://www.eyrie.org/~eagle/software/web/>.
+L<App::DocKnot::Spin> is part of DocKnot, available as the App-DocKnot
+distribution from CPAN or directly from its web site at
+L<https://www.eyrie.org/~eagle/software/docknot/>.
 
 =cut
 
