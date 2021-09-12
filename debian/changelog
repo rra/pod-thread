@@ -4,6 +4,7 @@ libpod-thread-perl (3.00-1) unstable; urgency=medium
   * New upstream release.
     - Remove support for parsing CVS $Id strings and emitting \id
       commands.
+    - Stop wrapping output text.
     - Fix internal section links.
     - Fix conversion of nested =over blocks.
     - Fix conversion of =over blocks without an =item.
@@ -11,12 +12,13 @@ libpod-thread-perl (3.00-1) unstable; urgency=medium
     - Fix metacharacter escaping in headings, contents, and navbar.
     - Fix handling of =for thread and =begin thread.
     - Fix non-breaking spaces in navbar section names.
+    - Fix internal links whose anchors are wrapped.
     - Output the document before erroring out if POD errors were seen.
     - Suppress \signature if the input document was empty.
     - Add bugtracker, homepage, and repository package metadata.
   * Update standards version to 4.6.0 (no changes required).
 
- -- Russ Allbery <rra@debian.org>  Sat, 11 Sep 2021 16:23:09 -0700
+ -- Russ Allbery <rra@debian.org>  Sat, 11 Sep 2021 18:57:18 -0700
 
 libpod-thread-perl (2.00-1) experimental; urgency=medium
 
