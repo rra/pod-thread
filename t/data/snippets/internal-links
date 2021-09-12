@@ -28,8 +28,7 @@ Some bar stuff linking to \link[#S1][FOO].
 
 \h2(#S3)[FOO BAR]
 
-Can link to myself: \link[#S3][FOO BAR].  But links to
-NOWHERE should disappear and links to "FOO" in
-Other::Module should get the default text.
+Can link to myself: \link[#S3][FOO BAR].  But links to NOWHERE should
+disappear and links to "FOO" in Other::Module should get the default text.
 
 \signature

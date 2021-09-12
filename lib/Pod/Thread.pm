@@ -195,38 +195,15 @@ sub _handle_element_end {
 # Output formatting
 ##############################################################################
 
-# Wrap a line at 74 columns.  Strictly speaking, there's no reason to do this
-# for thread output since thread is not sensitive to long lines, but it makes
-# the output more readable.
+# Ensure text ends in two newlines.
 #
-# $text - Text to wrap
+# $text - Text to reformat
 #
-# Returns: Wrapped text
+# Returns: Text with whitespace fixed
 sub _reformat {
     my ($self, $text) = @_;
-
-    # Strip trailing whitespace.
-    $text =~ s{ [ ]+ \z }{}xmsg;
-
-    # Collapse newlines to spaces while ensuring there are two spaces after
-    # periods.  (HTML won't care, but I do.)
-    $text =~ s{ [.]\n }{. \n}xmsg;
-    $text =~ s{ \n }{ }xmsg;
-    $text =~ s{ [ ]{3,} }{  }xmsg;
-
-    # Delegate the wrapping to Text::Wrap.
-    local $Text::Wrap::columns  = $WRAP_MARGIN;
-    local $Text::Wrap::huge     = 'overflow';
-    local $Text::Wrap::unexpand = 0;
-    my $output = wrap(q{}, q{}, $text);
-
-    # Remove stray leading spaces at the start of lines, created by Text::Wrap
-    # getting confused by two spaces after a period.
-    $output =~ s{ \n [ ] (\S) }{\n$1}xmsg;
-
-    # Ensure the result ends in two newlines.
-    $output =~ s{ \s* \z }{\n\n}xms;
-    return $output;
+    $text =~ s{ \s* \z }{\n\n}xms;
+    return $text;
 }
 
 # Accumulate output text.  We may have some accumulated whitespace in the
@@ -346,7 +323,7 @@ sub _navbar {
 
         # If adding this section would put us over 60 characters, output the
         # current line with a line break.
-        if ($length + length($section) > $NAVBAR_LENGTH) {
+        if ($length > 0 && $length + length($section) > $NAVBAR_LENGTH) {
             $output .= "$pending\\break\n  ";
             $pending = q{};
             $length  = 0;
@@ -451,6 +428,23 @@ sub _start_document {
     return;
 }
 
+# Canonicalize a heading for internal links.  We run both the anchor text and
+# the heading itself through this function so that whitespace differences
+# don't cause us to fail to create the link.
+#
+# Note that this affects only the end-of-document rewriting, not the links we
+# create as we go, because this case is rare and doing it as we go would
+# require more state tracking.
+#
+# $heading - Text of heading
+#
+# Returns: Canonicalized heading text
+sub _canonicalize_heading {
+    my ($self, $heading) = @_;
+    $heading =~ s{ \s+ }{ }xmsg;
+    return $heading;
+}
+
 # Handle the end of the document.  Tack \signature onto the end, output the
 # header and the accumulated output, and die if we saw any errors.
 #
@@ -471,20 +465,25 @@ sub _end_document {
     # This is very inefficient for large documents, but I doubt anything
     # processed by this module will be large enough to matter.
     my $i        = 1;
-    my %headings = map { ("[$_]", $i++) } $self->{HEADINGS}->@*;
     my $search   = '\\link[#PLACEHOLDER]';
     my $start    = 0;
+    my %headings = map { ('[' . $self->_canonicalize_heading($_) . ']', $i++) }
+      $self->{HEADINGS}->@*;
     while (($start = index($self->{OUTPUT}, $search, $start)) != -1) {
         my $text = substr($self->{OUTPUT}, $start + length($search));
         my ($anchor) = extract_bracketed($text, '[]', undef);
+        my $heading;
+        if ($anchor) {
+            $heading = $self->_canonicalize_heading($anchor);
+        }
 
         # If this is a known heading, replace #PLACEHOLDER with the link to
         # that heading and continue processing with the anchor text.
         # Otherwise, replace the entire \link command with the anchor text and
         # continue processing after it.
-        if (defined($anchor) && defined($headings{$anchor})) {
+        if (defined($anchor) && defined($headings{$heading})) {
             $start += length('\\link[');
-            my $link = "#S$headings{$anchor}";
+            my $link = "#S$headings{$heading}";
             substr($self->{OUTPUT}, $start, length('#PLACEHOLDER'), $link);
         } else {
             my $length = length('\\link[#PLACEHOLDER]') + length($anchor);
