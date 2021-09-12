@@ -195,38 +195,15 @@ sub _handle_element_end {
 # Output formatting
 ##############################################################################
 
-# Wrap a line at 74 columns.  Strictly speaking, there's no reason to do this
-# for thread output since thread is not sensitive to long lines, but it makes
-# the output more readable.
+# Ensure text ends in two newlines.
 #
-# $text - Text to wrap
+# $text - Text to reformat
 #
-# Returns: Wrapped text
+# Returns: Text with whitespace fixed
 sub _reformat {
     my ($self, $text) = @_;
-
-    # Strip trailing whitespace.
-    $text =~ s{ [ ]+ \z }{}xmsg;
-
-    # Collapse newlines to spaces while ensuring there are two spaces after
-    # periods.  (HTML won't care, but I do.)
-    $text =~ s{ [.]\n }{. \n}xmsg;
-    $text =~ s{ \n }{ }xmsg;
-    $text =~ s{ [ ]{3,} }{  }xmsg;
-
-    # Delegate the wrapping to Text::Wrap.
-    local $Text::Wrap::columns  = $WRAP_MARGIN;
-    local $Text::Wrap::huge     = 'overflow';
-    local $Text::Wrap::unexpand = 0;
-    my $output = wrap(q{}, q{}, $text);
-
-    # Remove stray leading spaces at the start of lines, created by Text::Wrap
-    # getting confused by two spaces after a period.
-    $output =~ s{ \n [ ] (\S) }{\n$1}xmsg;
-
-    # Ensure the result ends in two newlines.
-    $output =~ s{ \s* \z }{\n\n}xms;
-    return $output;
+    $text =~ s{ \s* \z }{\n\n}xms;
+    return $text;
 }
 
 # Accumulate output text.  We may have some accumulated whitespace in the
