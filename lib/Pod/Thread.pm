@@ -13,7 +13,7 @@
 package Pod::Thread 3.00;
 
 use 5.024;
-use strict;
+use autodie;
 use warnings;
 
 use base qw(Pod::Simple);
@@ -876,7 +876,7 @@ __END__
 
 =for stopwords
 Allbery CVS STDIN STDOUT navbar podlators MERCHANTABILITY NONINFRINGEMENT
-sublicense
+sublicense DocKnot
 
 =head1 NAME
 
@@ -900,9 +900,10 @@ Pod::Thread is a module that can convert documentation in the POD format
 language.  It lets the converter from thread to HTML handle some of the
 annoying parts of conversion to HTML.
 
-Pod::Thread is primarily intended for use with the L<App::DocKnot::Spin>
-static site generator, which implements the thread macro language.  This
-module provides POD formatting into thread and thus to HTML.
+Pod::Thread is primarily intended for use with the DocKnot static site
+generator (the L<App::DocKnot::Spin> module), which implements the thread
+macro language.  This module provides POD formatting into thread and thus to
+HTML.
 
 As a derived class from Pod::Simple, Pod::Thread supports the same methods and
 interfaces.  Briefly, one creates a new parser with Pod::Thread->new(), sets
@@ -987,9 +988,8 @@ This module is part of the Pod-Thread distribution.  The current version of
 Pod-Thread is available from CPAN, or directly from its web site at
 L<https://www.eyrie.org/~eagle/software/pod-thread/>.
 
-L<App::DocKnot::Spin> is part of DocKnot, available as the App-DocKnot
-distribution from CPAN or directly from its web site at
-L<https://www.eyrie.org/~eagle/software/docknot/>.
+DocKnot is available as the App-DocKnot distribution from CPAN, or directly
+from its web site at L<https://www.eyrie.org/~eagle/software/docknot/>.
 
 =cut
 
