@@ -1,4 +1,4 @@
-libpod-thread-perl (3.01-1) UNRELEASED; urgency=medium
+libpod-thread-perl (3.01-1) unstable; urgency=medium
 
   * New upstream release.
     - Fix warning when navbar is requested without any headings.
@@ -6,7 +6,7 @@ libpod-thread-perl (3.01-1) UNRELEASED; urgency=medium
     - Treat an undef title the same as no title.
     - Fix out of date documentation.
 
- -- Russ Allbery <rra@debian.org>  Sun, 26 Dec 2021 10:49:21 -0800
+ -- Russ Allbery <rra@debian.org>  Sun, 26 Dec 2021 10:54:27 -0800
 
 libpod-thread-perl (3.00-1) unstable; urgency=medium
 
