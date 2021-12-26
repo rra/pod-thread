@@ -4,6 +4,7 @@
 
  - Fix Perl warning when navbar is requested but there are no headings.
  - Always output \heading even if no title was seen.
+ - Treat an undef title option the same as if no title was specified.
  - Remove docmentation of the id option to the constructor.
  - Replace references to spin in the documentation with DocKnot.
 

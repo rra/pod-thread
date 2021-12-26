@@ -640,7 +640,7 @@ sub _cmd_head1 {
     # If we're in the NAME section and no title was explicitly set, set the
     # flag used in cmd_para to parse the NAME text specially and then do
     # nothing else (since we won't print out the NAME section as itself.
-    if ($text eq 'NAME' && !exists($self->{opt_title})) {
+    if ($text eq 'NAME' && !defined($self->{opt_title})) {
         $self->{IN_NAME} = 1;
         return;
     }
