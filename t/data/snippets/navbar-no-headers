@@ -10,6 +10,8 @@ navbar 1
 This is some text without any headings.
 
 [output]
+\heading[][]
+
 This is some text without any headings.
 
 \signature

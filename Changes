@@ -3,6 +3,7 @@
 3.01 - Not Released
 
  - Fix Perl warning when navbar is requested but there are no headings.
+ - Always output \heading even if no title was seen.
  - Remove docmentation of the id option to the constructor.
  - Replace references to spin in the documentation with DocKnot.
 

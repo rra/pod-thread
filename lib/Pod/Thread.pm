@@ -367,6 +367,8 @@ sub _header {
     if ($self->{TITLE}) {
         $output .= "\\heading[$self->{TITLE}][$style]\n\n";
         $output .= "\\h1[$self->{TITLE}]\n\n";
+    } else {
+        $output .= "\\heading[][]\n\n";
     }
 
     # If there is a subheading, add it.
