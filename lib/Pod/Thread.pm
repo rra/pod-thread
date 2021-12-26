@@ -270,7 +270,7 @@ sub _contents {
     # Construct and return the table of contents.
     my $output = "\\h2[Table of Contents]\n\n";
     for my $i (0 .. $self->{HEADINGS}->$#*) {
-        my $tag     = 'S' . ($i + 1);
+        my $tag = 'S' . ($i + 1);
         my $section = $self->{HEADINGS}[$i];
         $output .= "\\number(packed)[\\link[#$tag][$section]]\n";
     }
@@ -316,9 +316,9 @@ sub _navbar {
     # would count all the thread commands.  This won't be quite right if
     # headings contain formatting.
     my $pending = q{};
-    my $length  = 0;
+    my $length = 0;
     for my $i (0 .. scalar($self->{HEADINGS}->$#*)) {
-        my $tag     = 'S' . ($i + 1);
+        my $tag = 'S' . ($i + 1);
         my $section = $self->{HEADINGS}[$i];
 
         # If adding this section would put us over 60 characters, output the
@@ -326,7 +326,7 @@ sub _navbar {
         if ($length > 0 && $length + length($section) > $NAVBAR_LENGTH) {
             $output .= "$pending\\break\n  ";
             $pending = q{};
-            $length  = 0;
+            $length = 0;
         }
 
         # If this isn't the first thing on a line, add the separator.
@@ -360,7 +360,7 @@ sub _navbar {
 # Returns: The thread source for the document heading
 sub _header {
     my ($self) = @_;
-    my $style  = $self->{opt_style} || q{};
+    my $style = $self->{opt_style} || q{};
     my $output = q{};
 
     # Add the basic title, page heading, and style if we saw a title.
@@ -404,6 +404,7 @@ sub _start_document {
     }
 
     # Initialize per-document variables.
+    #<<<
     $self->{HEADINGS}     = [];
     $self->{IN_NAME}      = 0;
     $self->{ITEM_OPEN}    = 0;
@@ -414,6 +415,7 @@ sub _start_document {
     $self->{PENDING}      = [[]];
     $self->{SUBHEADING}   = undef;
     $self->{TITLE}        = $self->{opt_title} // q{};
+    #>>>
 
     # Check whether our output file handle already has a PerlIO encoding layer
     # set.  If it does not, we'll need to encode our output before printing
@@ -422,7 +424,7 @@ sub _start_document {
     $self->{ENCODE} = 1;
     eval {
         my @options = (output => 1, details => 1);
-        my @layers  = PerlIO::get_layers($self->{output_fh}->**, @options);
+        my @layers = PerlIO::get_layers($self->{output_fh}->**, @options);
         if ($layers[-1] && ($layers[-1] & PerlIO::F_UTF8())) {
             $self->{ENCODE} = 0;
         }
@@ -466,9 +468,9 @@ sub _end_document {
     #
     # This is very inefficient for large documents, but I doubt anything
     # processed by this module will be large enough to matter.
-    my $i        = 1;
-    my $search   = '\\link[#PLACEHOLDER]';
-    my $start    = 0;
+    my $i = 1;
+    my $search = '\\link[#PLACEHOLDER]';
+    my $start = 0;
     my %headings = map { ('[' . $self->_canonicalize_heading($_) . ']', $i++) }
       $self->{HEADINGS}->@*;
     while (($start = index($self->{OUTPUT}, $search, $start)) != -1) {
@@ -539,7 +541,7 @@ sub _cmd_para {
     # NAME section of a man page, stash that information for the page heading.
     elsif ($self->{IN_NAME} && $text =~ $NAME_REGEX) {
         my ($name, $description) = ($1, $2);
-        $self->{TITLE}      = $name;
+        $self->{TITLE} = $name;
         $self->{SUBHEADING} = $description;
     }
 
@@ -591,8 +593,10 @@ sub _cmd_data {
 
 # Called when =for and similar constructs are started or ended.  Set or clear
 # the literal flag so that we won't escape the text on the way in.
+#<<<
 sub _start_for { my ($self) = @_; $self->{LITERAL} = 1; return; }
 sub _end_for   { my ($self) = @_; $self->{LITERAL} = 0; return; }
+#>>>
 
 ##############################################################################
 # Headings
@@ -687,7 +691,7 @@ sub _item {
     # Now, output the start of the item tag plus the text, if any.
     my $tag = $self->{ITEMS}[-1];
     $self->_output($tag . "\n[" . ($text // q{}));
-    $self->{ITEM_OPEN}    = 1;
+    $self->{ITEM_OPEN} = 1;
     $self->{ITEM_PENDING} = 0;
     return;
 }
@@ -745,9 +749,11 @@ sub _over_end {
 # are all dispatched to the relevant common routine except for block.
 # Pod::Simple gives us the type information on both the =over and the =item.
 # We ignore it here and use it when we see the =item.
+#<<<
 sub _start_over_bullet { my ($self) = @_; return $self->_over_start() }
 sub _start_over_number { my ($self) = @_; return $self->_over_start() }
 sub _start_over_text   { my ($self) = @_; return $self->_over_start() }
+#>>>
 
 # Over of type block (which is =over without any =item) has to be handled
 # specially, since normally we defer issuing the tag until we see the first
@@ -762,10 +768,12 @@ sub _start_over_block {
 }
 
 # Likewise for the end commands.
+#<<<
 sub _end_over_block  { my ($self) = @_; return $self->_over_end() }
 sub _end_over_bullet { my ($self) = @_; return $self->_over_end() }
 sub _end_over_number { my ($self) = @_; return $self->_over_end() }
 sub _end_over_text   { my ($self) = @_; return $self->_over_end() }
+#>>>
 
 # An individual list item command.  Note that this fires when the =item
 # command is seen, not when we've accumulated all the text that's part of that
@@ -807,9 +815,11 @@ sub _item_common {
 
 # All the various item commands just call item_common.
 ## no critic (Subroutines::RequireArgUnpacking)
+#<<<
 sub _cmd_item_bullet { my $s = shift; return $s->_item_common('bullet', @_) }
 sub _cmd_item_number { my $s = shift; return $s->_item_common('number', @_) }
 sub _cmd_item_text   { my $s = shift; return $s->_item_common('desc',   @_) }
+#>>>
 ## use critic
 ## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
 
@@ -849,7 +859,7 @@ sub _cmd_l {
             return "\\link[$attrs->{to}][$text]";
         }
     } elsif ($attrs->{type} eq 'pod') {
-        my $page    = $attrs->{to};
+        my $page = $attrs->{to};
         my $section = $attrs->{section};
         if (!defined($page) && defined($section)) {
             my $tag = 'PLACEHOLDER';
