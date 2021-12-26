@@ -306,7 +306,7 @@ sub _capitalize_for_navbar {
 # Returns: The thread code for the navbar
 sub _navbar {
     my ($self) = @_;
-    return if !$self->{HEADINGS}->@*;
+    return q{} if !$self->{HEADINGS}->@*;
 
     # Build the start of the navbar.
     my $output = "\\class(navbar)[\n  ";
